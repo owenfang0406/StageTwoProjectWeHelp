@@ -79,15 +79,17 @@ def makeAttractionsResp(list, page):
 					}
 				)
 
-	dataDict["data"] = temp
 	if int(page) >= 0:	
+		dataDict["data"] = temp
 		if len(list) >= 13:
 			dataDict["nextPage"] = int(page) + 1
+			return jsonify(dataDict)
 			
 		else:
 			dataDict["nextPage"] = None
 			return jsonify(dataDict)
-	else: 
+	else:
+		dataDict["data"] = temp[0]
 		return jsonify(dataDict)
 
 def err(e, statusCode):
