@@ -134,7 +134,7 @@ def lookUpSitesAPI():
 		elif page != None and keyword != None:
 			newSites = []
 			sql = """
-			select * from websql where name = %s order by id limit 13 offset %s;
+			select * from websql where category = %s order by id limit 13 offset %s;
 			"""
 			offset = int(page) * 12
 			args = (keyword, offset)
