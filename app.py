@@ -162,7 +162,7 @@ def lookUpSitesAPI():
 			return err(msg, 500)
 
 			
-@app.route("/api/attractions/<attractionId>")
+@app.route("/api/attraction/<attractionId>")
 def loopUpId(attractionId):
 	if attractionId:
 		sql = """
