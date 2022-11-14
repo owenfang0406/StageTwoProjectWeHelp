@@ -77,15 +77,17 @@ def makeAttractionsResp(list, page):
 						"images":list[i][9]
 					}
 				)
-		
 	dataDict["data"] = temp
-	if len(list) >= 13:
-		dataDict["nextPage"] = int(page) + 1
-		
-	else:
-		dataDict["nextPage"] = None
+	if int(page) >= 0:	
+		if len(list) >= 13:
+			dataDict["nextPage"] = int(page) + 1
+			
+		else:
+			dataDict["nextPage"] = None
 
-	return jsonify(dataDict)
+		return jsonify(dataDict)
+	else: 
+		return jsonify(dataDict)
 
 def err(e, statusCode):
 	msg = dict()
@@ -172,7 +174,7 @@ def loopUpId(attractionId):
 		sites = requestCon(sql, args)
 		if sites:
 			newSites = appendURLs(sites)
-			newSites = makeAttractionsResp(newSites, 0)
+			newSites = makeAttractionsResp(newSites, -1)
 			return newSites
 		else:
 			msg = "輸入資料錯誤"
