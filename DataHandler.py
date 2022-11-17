@@ -1,4 +1,34 @@
-import json, re
+import json, re, mysql.connector
+from mysql.connector import pooling, Error
+
+try: 
+    connection_pool = pooling.MySQLConnectionPool(
+        pool_name = "TravelInfo_pool",
+        pool_size = 10,
+        pool_reset_session = True,
+        host = 'localhost',
+        database = 'website',
+        user = 'root',
+        password = 'Ppp0935082190'
+    )
+    print("Printing connection pool properties ")
+    print("Connection Pool Name - ", connection_pool.pool_name)
+    print("Connection Pool Size - ", connection_pool.pool_size)
+
+except Error as e:
+    print("Error while connecting to MySQL using Connection pool ", e)
+
+def requestCon(sql, args):  
+    connection_object = connection_pool.get_connection()
+    cursor = connection_object.cursor()
+    cursor.execute(sql, args,)
+    record = cursor.fetchall()
+    connection_object.commit()
+    cursor.close()
+    connection_object.close()
+    print("MySQL connection is closed")
+    print("Your connected to - ", record)
+    return record
 
 with open('data/taipei-attractions.json', 'r' , encoding='utf-8') as j:
     data = json.load(j)
@@ -41,9 +71,8 @@ def splitHttp (String):
 def splitExtension (List):
     Rex = re.compile(r"jpg", flags=re.I)
     return [i for i in List if re.search(Rex, i)]
-
+SQLData = []
 for datum in data:
-    SQLData = []
     id = datum["_id"]
     name = datum["name"]
     category = datum["CAT"]
@@ -69,9 +98,22 @@ for datum in data:
             "images": images
         }
     )
-    print(SQLData)
+for fields in SQLData:
+    # print(fields['id'], fields['name'], fields['category'], fields['description'], fields['address'], fields['transport'], fields['mrt'], fields['lat'], fields['lng'])
+    # print(fields['mrt'])
+    for files in fields['images']:
+        sql = """
+        insert into urls (id, url) values(%s, %s)
+        """
+        args = (fields['id'], files)
+        requestCon(sql, args)
+    # requestCon(sql, args)
+
+print("inset completed")
+    # print(SQLData)
 #       "id": 10,
 #       "name": "平安鐘",
+
 #       "category": "公共藝術",
 #       "description": "平安鐘祈求大家的平安，這是為了紀念 921 地震週年的設計",
 #       "address": "臺北市大安區忠孝東路 4 段 1 號",

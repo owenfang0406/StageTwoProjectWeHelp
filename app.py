@@ -1,7 +1,173 @@
 from flask import *
+import json, re, mysql.connector
+from mysql.connector import pooling, Error
+
 app=Flask(__name__)
 app.config["JSON_AS_ASCII"]=False
 app.config["TEMPLATES_AUTO_RELOAD"]=True
+app.config["JSON_SORT_KEYS"] = False
+
+try: 
+    connection_pool = pooling.MySQLConnectionPool(
+        pool_name = "TravelInfo_pool",
+        pool_size = 10,
+        pool_reset_session = True,
+        host = 'localhost',
+        database = 'website',
+        user = 'root',
+        password = 'Ppp0935082190'
+    )
+    print("Printing connection pool properties ")
+    print("Connection Pool Name - ", connection_pool.pool_name)
+    print("Connection Pool Size - ", connection_pool.pool_size)
+
+except Error as e:
+    print("Error while connecting to MySQL using Connection pool ", e)
+
+def requestCon(sql, args):  
+	connection_object = connection_pool.get_connection()
+	cursor = connection_object.cursor()
+	if args == None:
+		cursor.execute(sql)
+		record = cursor.fetchall()
+		# connection_object.commit()
+		cursor.close()
+		connection_object.close()
+		# print("MySQL connection is closed")
+		# print("Your connected to - ", record)
+		return record
+	else:
+		cursor.execute(sql, args)
+		record = cursor.fetchall()
+		# connection_object.commit()
+		cursor.close()
+		connection_object.close()
+		# print("MySQL connection is closed")
+		# print("Your connected to - ", record)
+		return record
+
+def makeAttractionsResp(list, page):
+	dataDict = dict()
+	dataDict["data"] = dict()
+	temp = []
+	for item in list:
+			temp.append(
+				{
+					"id": item[0],
+					"name": item[1],
+					"category": item[2],
+					"description": item[3],
+					"address": item[4],
+					"transport": item[5],
+					"mrt": item[6],
+					"lat": item[7],
+					"lng": item[8],
+					"images":item[9]
+				}
+			)
+	dataDict["data"] = temp
+
+	if len(list) >= 13:
+		dataDict["nextPage"] = int(page) + 1
+		
+	else:
+		dataDict["nextPage"] = None
+
+	return jsonify(dataDict)
+
+def err(e, statusCode):
+	msg = dict()
+	msg["error"] = True
+	msg["message"] = e
+	return make_response(jsonify(msg), statusCode)
+
+
+def appendURLs(sites):
+	newSites = []
+	for site in sites:
+		args = (site[0],)
+		urlsql = """
+		select url from urls where id = %s
+		"""
+		urls = (requestCon(urlsql, args))
+		newUrls = []
+		for url in urls:
+			newUrls.append(url[0])
+		site += (newUrls,)
+		newSites.append(site)
+	return newSites
+
+
+@app.route("/api/attractions")
+def lookUpSitesAPI():
+	if request.method == 'GET':
+		page = request.args.get('page')
+		keyword = request.args.get('keyword')
+		if page != None and keyword == None:
+			# newSites = []
+			sql = """
+			select * from websql order by id limit 13 offset %s;
+			"""
+			offset = int(page) * 12
+			args = (offset,)
+			sites = requestCon(sql, args)
+			if not sites:
+				msg = "伺服器錯誤"
+				return err(msg, 500)
+			else:
+				newSites = appendURLs(sites)
+				newSites = makeAttractionsResp(newSites,page)
+				return make_response(newSites, 200)
+
+		elif page != None and keyword != None:
+			newSites = []
+			sql = """
+			select * from websql where name = %s order by id limit 13 offset %s;
+			"""
+			offset = int(page) * 12
+			args = (keyword, offset)
+			sites = requestCon(sql, args)
+			if sites != []:
+				newSites = appendURLs(sites)
+				newSites = makeAttractionsResp(newSites,page)
+				return make_response(newSites, 200)
+			else:
+				sql = """
+				select * from websql where name like %s order by id limit 13 offset %s;
+				"""
+				keyword = "%" + keyword + "%"
+				args = (keyword, offset)
+				sites = requestCon(sql, args)
+				if sites: 
+					newSites = appendURLs(sites)
+					newSites = makeAttractionsResp(newSites,page)
+					return make_response(newSites, 200)
+				else:
+					msg = "輸入資料錯誤"
+					return err(msg, 400)
+		else:
+			msg = "伺服器錯誤"
+			return err(msg, 500)
+
+			
+@app.route("/api/attractions/<attractionId>")
+def loopUpId(attractionId):
+	if attractionId:
+		sql = """
+				select * from websql where id = %s;
+				"""
+		args = (attractionId,)
+		sites = requestCon(sql, args)
+		if sites:
+			newSites = appendURLs(sites)
+			newSites = makeAttractionsResp(newSites, 0)
+			return newSites
+		else:
+			msg = "輸入資料錯誤"
+			return err(msg, 400)
+	else:
+		msg = "輸入資料錯誤"
+		return err(msg, 400)
 
 # Pages
 @app.route("/")
