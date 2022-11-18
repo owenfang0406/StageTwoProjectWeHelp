@@ -45,6 +45,7 @@ def makeAttractionsResp(list, page):
 	dataDict = dict()
 	dataDict["data"] = dict()
 	temp = []
+	
 	if len(list) == 13:
 		for i in range(0,12):
 				temp.append(
@@ -77,6 +78,7 @@ def makeAttractionsResp(list, page):
 						"images":list[i][9]
 					}
 				)
+
 	dataDict["data"] = temp
 	if int(page) >= 0:	
 		if len(list) >= 13:
@@ -84,8 +86,7 @@ def makeAttractionsResp(list, page):
 			
 		else:
 			dataDict["nextPage"] = None
-
-		return jsonify(dataDict)
+			return jsonify(dataDict)
 	else: 
 		return jsonify(dataDict)
 
