@@ -30,11 +30,8 @@ def requestCon(sql, args):
 	if args == None:
 		cursor.execute(sql)
 		record = cursor.fetchall()
-		# connection_object.commit()
 		cursor.close()
 		connection_object.close()
-		# print("MySQL connection is closed")
-		# print("Your connected to - ", record)
 		return record
 	else:
 		cursor.execute(sql, args)
@@ -42,31 +39,46 @@ def requestCon(sql, args):
 		# connection_object.commit()
 		cursor.close()
 		connection_object.close()
-		# print("MySQL connection is closed")
-		# print("Your connected to - ", record)
 		return record
 
 def makeAttractionsResp(list, page):
 	dataDict = dict()
 	dataDict["data"] = dict()
 	temp = []
-	for item in list:
+	if len(list) == 13:
+		for i in range(0,12):
+				temp.append(
+					{
+						"id": list[i][0],
+						"name": list[i][1],
+						"category": list[i][2],
+						"description": list[i][3],
+						"address": list[i][4],
+						"transport": list[i][5],
+						"mrt": list[i][6],
+						"lat": list[i][7],
+						"lng": list[i][8],
+						"images":list[i][9]
+					}
+				)
+	else: 
+		for i in range((len(list))):
 			temp.append(
-				{
-					"id": item[0],
-					"name": item[1],
-					"category": item[2],
-					"description": item[3],
-					"address": item[4],
-					"transport": item[5],
-					"mrt": item[6],
-					"lat": item[7],
-					"lng": item[8],
-					"images":item[9]
-				}
-			)
+					{
+						"id": list[i][0],
+						"name": list[i][1],
+						"category": list[i][2],
+						"description": list[i][3],
+						"address": list[i][4],
+						"transport": list[i][5],
+						"mrt": list[i][6],
+						"lat": list[i][7],
+						"lng": list[i][8],
+						"images":list[i][9]
+					}
+				)
+		
 	dataDict["data"] = temp
-
 	if len(list) >= 13:
 		dataDict["nextPage"] = int(page) + 1
 		
