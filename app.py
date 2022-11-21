@@ -83,20 +83,28 @@ def makeAttractionsResp(list, page):
 		dataDict["data"] = temp
 		if len(list) >= 13:
 			dataDict["nextPage"] = int(page) + 1
-			return jsonify(dataDict)
+			response = jsonify(dataDict)
+			response.headers.add('Access-Control-Allow-Origin', '*')
+			return response
 			
 		else:
 			dataDict["nextPage"] = None
-			return jsonify(dataDict)
+			response = jsonify(dataDict)
+			response.headers.add('Access-Control-Allow-Origin', '*')
+			return response
 	else:
 		dataDict["data"] = temp[0]
-		return jsonify(dataDict)
+		response = jsonify(dataDict)
+		response.headers.add('Access-Control-Allow-Origin', '*')
+		return response
 
 def err(e, statusCode):
 	msg = dict()
 	msg["error"] = True
 	msg["message"] = e
-	return make_response(jsonify(msg), statusCode)
+	response = jsonify(msg)
+	response.headers.add('Access-Control-Allow-Origin', '*')
+	return make_response(msg, statusCode)
 
 
 def appendURLs(sites):
