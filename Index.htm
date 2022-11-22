@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>台北一日遊</title>
+    <style>
+        @import url(https://fonts.googleapis.com/css2?family=Noto+Sans+TC&display=swap);
+        body {
+            padding: 0px;
+            margin: 0px;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        nav {
+            max-width: 1200px;
+            display: flex;
+            justify-content: space-between;
+            margin: 0 auto;
+        }
+
+        .navDiv1 {
+            display: flex;
+        }
+
+        .navDiv1 > button {
+            background-color: white;
+            border: none;
+            height: 30px;
+        }
+
+        .navDiv1 > button:hover {
+            cursor: pointer;
+            /* background-color: #757575; */
+            color: darkgray;
+        }
+
+        .navEle1 {
+            font-size: 30px;
+            padding: 10px;
+            color: #448899;
+            font-family: 'Noto Sans TC';
+            font-weight: 700;  
+        }
+
+        .navEle2 {
+            font-size: 16px;
+            padding: 20px 0px;
+            color: #666666;
+            font-weight: 500;
+        }
+
+        .navSubCSS1 {
+            margin-left: 10px;
+        }
+
+        .helloPage {
+            position: relative;
+            max-width: 1920px;
+            height: 320px;
+            margin: 0 auto;
+            overflow: hidden;
+            /* z-index: 1; */
+        }
+
+        .helloPage > img {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+        }
+
+        /* main {
+            width: 1920px;
+            margin: auto auto;
+            top: 600px;
+            height: 700px;
+            background-color: aquamarine;
+            padding-bottom: 110px;
+        } */
+
+        .slogan {
+            position: absolute;
+            max-width: 1200px;
+            top: 75px;
+            left: 0px;
+            right: 0px;
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 25px;
+            /* z-index: 0; */
+        }
+
+        .slogan1 {
+            color:white;
+            /* color: black; */
+            font-weight: 700;
+            font-family: "Noto Sans TC";
+        }
+
+        .text1 {
+            font-size: 28px;
+            font-family: "Noto Sans TC";
+        }
+
+        .text2 {
+            font-size: 16px;
+            font-family: "Noto Sans TC";
+        }
+
+        footer {
+            justify-content: center;
+            align-items: center;
+            display: flex;
+            max-width: 1920px;
+            height: 104px;
+            margin: 0 auto;
+            position: fixed;
+            bottom: 0px;
+            left: 0px;
+            right: 0px;
+            background-color: #757575;
+            z-index: 0;
+        }
+
+        .footerStr {
+            height: fit-content;
+            width: fit-content;
+            color: white;
+            font-size: 16px;
+            font-weight: 700;
+            font-family: "Noto Sans TC";
+            z-index: 1;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            margin-top: 50px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 124px;
+        }
+
+        .picBox {
+            display: flex;
+            position: relative;
+            /* background-color: burlywood; */
+            width: 270px;
+            margin-bottom: 30px;
+            height: 242px;border: 1px solid #E8E8E8;
+            border-radius: 5px;
+            
+        }
+
+        .boxImgs {
+            width: 270px;
+            height: 197px;
+            object-fit: fill;
+        }
+
+        .siteNames {
+            position: absolute;
+            top: 155px;
+            left: 0px;
+            padding-left: 10px;
+            padding-bottom: 10px;
+            padding-top: 10px;
+            width: 260px;
+            height: auto;
+            background-color: rgba(0, 0, 0, .6);
+            color: white;
+            font-weight: 700;
+            font-size: 16px;
+            font-family: "Noto Sans TC";
+        }
+
+        .mrtDiv {
+            position: absolute;
+            color: #757575;
+            font-size: 16px;
+            font-weight: 700;
+            top: 197px;
+            left: 0;
+            padding-left: 10px;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            font-family: "Noto Sans TC";
+        }
+
+        .cats {
+            position: absolute;
+            top: 197px;
+            right: 0px;
+            color: #757575;
+            font-size: 16px;
+            font-weight: 700;
+            font-family: "Noto Sans TC";
+            padding-right: 10px;
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="navEle1">台北一日遊</div>
+        <div class="navDiv1">
+            <button class="navEle2">預定行程</button>
+            <button class="navEle2 navSubCSS1">登入/註冊</button>
+        </div>
+    </nav>
+    <div class="helloPage">
+        <img src="welcome.png" alt="Taipei 101">
+        <div class="slogan">
+            <div class="slogan1 text1">輕鬆享受台北一日悠閒</div>
+            <div class="slogan1 text2">探索每個角落，體驗城市深度鐵道行程</div>
+            <div>
+                <input type="text">
+                <button></button>
+            </div>
+        </div>
+    </div>
+    <main>
+        <div class="picBox"></div>
+        <div class="picBox"></div>
+        <div class="picBox"></div>
+        <div class="picBox"></div>
+        <div class="picBox"></div>
+        <div class="picBox"></div>
+        <div class="picBox"></div>
+        <div class="picBox"></div>
+        <div class="picBox"></div>
+        <div class="picBox"></div>
+        <div class="picBox"></div>
+        <div class="picBox"></div>
+    </main>
+    <footer>
+        <div class="footerStr">COPYRIGHT © 2021 台北一日遊</div>
+    </footer>
+</body>
+<script>
+    fetch("http://52.74.43.7:3000/api/attractions?page=0")
+    .then(function(response) {
+        return response.json()
+    }).then((Myjson) => {
+        console.log(Myjson.data);
+        PicBoxes = document.querySelectorAll(".picBox");
+        console.log(PicBoxes);
+        for (let i = 0; i < Myjson.data.length; i ++) {
+            PicBoxes = document.querySelectorAll(".picBox");
+            picSRC = Myjson.data[i].images[0];
+            let image = document.createElement("img");
+            image.setAttribute('src', picSRC);
+            image.classList.add("boxImgs")
+            PicBoxes[i].appendChild(image);
+
+            siteNames = Myjson.data[i].name;
+            let SiteName = document.createElement("div");
+            SiteName.innerText = siteNames;
+            SiteName.classList.add("siteNames");
+            PicBoxes[i].appendChild(SiteName);
+
+            mrts = Myjson.data[i].mrt;
+            let mrt = document.createElement("div");
+            mrt.classList.add("mrtDiv");
+            mrt.innerText = mrts;
+            PicBoxes[i].appendChild(mrt);    
+            
+            cats = Myjson.data[i].category;
+            let category = document.createElement("div");
+            category.classList.add("cats");
+            category.innerText = cats;
+            PicBoxes[i].appendChild(category);
+        }
+    })
+</script>
+</html>
