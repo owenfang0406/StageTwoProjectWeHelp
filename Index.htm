@@ -203,6 +203,53 @@
             padding-top: 10px;
             padding-bottom: 10px;
         }
+
+        .serachbtn {
+            width: 40px;
+            height: 40px;
+            border: none;
+            background-color:#448899;
+            border-top-right-radius: 5px;
+            border-bottom-right-radius: 5px;
+        }
+
+        input {
+            padding: 0px;
+            height: 40px;
+            width: 400px;
+            border-width: 0px;
+            font-size: 16px;
+            padding-left: 15px;
+            border-top-left-radius: 5px;
+            border-bottom-left-radius: 5px;
+            /* position: relative; */
+        }
+
+        .dropDownBox {
+            margin-top: 3px;
+            width: 415px;
+            height: 160px;
+            left: 0px;
+            top: 45px;
+            border: #757575;
+            border-radius: 5px;
+            background-color: white;
+            display: none;
+        }
+        /* ::placeholder {
+        } */
+
+        .searchBox {
+            width: fit-content;
+            display: flex;
+            align-items: center;
+        }
+
+        .searchImg {
+            width: 100%;
+            height: auto;
+        }
+
     </style>
 </head>
 <body>
@@ -218,9 +265,12 @@
         <div class="slogan">
             <div class="slogan1 text1">輕鬆享受台北一日悠閒</div>
             <div class="slogan1 text2">探索每個角落，體驗城市深度鐵道行程</div>
-            <div>
-                <input type="text">
-                <button></button>
+            <div class="searchBox">
+                <input type="text" placeholder="輸入景點名稱查詢" id="searchTxt" name="searchedAttraction">
+                <button class="serachbtn" onclick="searchKeyword()"><img class="searchImg" src="icon_search.png" alt=""></button>
+            </div>
+            <div class="dropDownBox" id="dropDownBox">
+                This is a box
             </div>
         </div>
     </div>
@@ -243,6 +293,45 @@
     </footer>
 </body>
 <script>
+    let pageIndex = 0;
+    document.getElementById("searchTxt").addEventListener("click", function() {
+        toggle(document.querySelectorAll(".dropDownBox"))
+    });
+    
+    document.addEventListener("click", function (e) {
+        let dropDownBox = document.getElementById("dropDownBox")
+        if(e.target.id !== "searchTxt") {
+            dropDownBox.style.display ='none';
+        }
+        else return
+    })
+
+    function toggle(elements, specifyDisplay) {
+        elements = elements.length? elements : [elements]
+        if (typeof(elements) != null){
+            for (index = 0; index < elements.length; index++) {
+                element = elements[index];
+                if (isElemHidden(element)) {
+                    element.style.display = '';
+
+                    if (isElemHidden(element)) {
+                        element.style.display = specifyDisplay || 'block';
+                    }
+                }else {
+                        element.style.display = 'none';
+
+
+                    }
+            
+            function isElemHidden(element) {
+                if (element != null){
+                return window.getComputedStyle(element, null).getPropertyValue('display') === 'none';
+                }else return
+            
+                }
+            }
+        }else return
+    } 
     function fetchAttractionsJSON(nextPage) {
         if (nextPage != null){
             return fetch(`http://52.74.43.7:3000/api/attractions?page=${nextPage}`)
@@ -253,9 +342,42 @@
         } else return
     }
 
+    function fectchAttractionJsonWithKeywords(keyword, pageIndex) {
+        return fetch(`http://52.74.43.7:3000/api/attractions?page=${pageIndex}&keyword=${keyword}`)
+        .then((response) => {
+            myJson = response.json();
+            pageIndex = myJson.nextPage;
+            return myJson
+        })
+    }
+    
+    let keyword = "";
+    function searchKeyword() {
+        const picBoxes = document.querySelectorAll(".picBox");
+        keyword = document.getElementById("searchTxt").value;
+        picBoxes.forEach( (ele) => {
+                ele.remove();
+            }
+        )
+        event.preventDefault();
+        fectchAttractionJsonWithKeywords(keyword, 0)
+        .then(function(Myjson) {
+        appendAttractions(Myjson);
+        lastDivObserver.observe(document.querySelector(".picBox:last-child"));
+        document.getElementById("searchTxt").value = '';
+        }).catch( () =>{
+            let main = document.querySelector("main");
+            notFoundMsg = document.createElement("div");
+            notFoundMsg.classList.add("picBox");
+            notFoundMsg.innerText = "找無匹配景點";
+            main.appendChild(notFoundMsg);
+            }
+        )
+    }
+
     function appendAttractions(jsonResp) {
         pageIndex = jsonResp.nextPage;
-        if (jsonResp.nextPage != null) {
+        if (jsonResp.error != true) {
             let main = document.querySelector("main")
             for (let i = 0; i < jsonResp.data.length; i++) {
                 let PicBox = document.createElement("div");
@@ -287,21 +409,36 @@
                 PicBox.appendChild(category);
 
             }
-        } else return
-    }
-
-    let shouldPerformRequest = true;
-    function createMoreDivs() {
-        if (!shouldPerformRequest) {
-            console.log("createMoreDivs-2");
+        } else {
+            let main = document.querySelector("main");
+            notFoundMsg = document.createElement("div");
+            notFoundMsg.classList.add("picBox");
+            notFoundMsg.innerText = "資料庫發生錯誤";
+            main.appendChild(notFoundMsg);
             return
         }
-        else if (pageIndex != null) {
+    }
+    
+
+    let shouldPerformRequest = true;
+    function createMoreDivs(keyword) {
+        if (!shouldPerformRequest) {
+            return
+        }
+        else if (pageIndex != null & keyword == null) {
             shouldPerformRequest = !shouldPerformRequest;
             fetchAttractionsJSON(pageIndex).then(function(jsonResp) {
                 shouldPerformRequest = !shouldPerformRequest;
                 appendAttractions(jsonResp);
                 lastDivObserver.observe(document.querySelector(".picBox:last-child"));   
+            })
+        }
+        else if (pageIndex != null & keyword != null) {
+            shouldPerformRequest = !shouldPerformRequest;
+            fectchAttractionJsonWithKeywords(keyword).then(function(jsonResp) {
+            shouldPerformRequest = !shouldPerformRequest;
+            appendAttractions(jsonResp);
+            lastDivObserver.observe(document.querySelector(".picBox:last-child"));   
             })
         }
         else return
@@ -310,11 +447,11 @@
     const lastDivObserver = new IntersectionObserver(entries => {
         const lastDiv = entries[0]
         if (!lastDiv.isIntersecting) return; 
-        createMoreDivs()
+        createMoreDivs(keyword)
         lastDivObserver.unobserve(lastDiv.target)
     }, {threshold: 1}); 
     
-    let pageIndex = 0;
+
     fetchAttractionsJSON(pageIndex)
         .then((Myjson) => {
             PicBoxes = document.querySelectorAll(".picBox");
