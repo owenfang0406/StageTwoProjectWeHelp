@@ -51,8 +51,7 @@ def makeCategoriesRes(list):
 	dataDict["data"] = temp	
 	response = jsonify(dataDict)
 	response.headers.add('Access-Control-Allow-Origin', '*')
-
-	return dataDict
+	return response
 
 def makeAttractionsResp(list, page):
 	dataDict = dict()
