@@ -41,6 +41,19 @@ def requestCon(sql, args):
 		connection_object.close()
 		return record
 
+def makeCategoriesRes(list):
+	dataDict = dict()
+	temp = []
+
+	for category in list:
+		temp.append(category[0])
+
+	dataDict["data"] = temp	
+	response = jsonify(dataDict)
+	response.headers.add('Access-Control-Allow-Origin', '*')
+
+	return dataDict
+
 def makeAttractionsResp(list, page):
 	dataDict = dict()
 	dataDict["data"] = dict()
@@ -122,6 +135,19 @@ def appendURLs(sites):
 		newSites.append(site)
 	return newSites
 
+@app.route("/api/categories")
+def lookUpCateAPI():
+	if request.method == 'GET':
+		sql = """
+		select * from category;
+		"""
+		categories = requestCon(sql, None)
+		categoriesJson = makeCategoriesRes(categories)
+		if not categories:
+			msg = "伺服器錯誤"
+			return err(msg, 500)
+		else:
+			return categoriesJson
 
 @app.route("/api/attractions")
 def lookUpSitesAPI():
