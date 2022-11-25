@@ -88,7 +88,7 @@
             right: 0px;
             margin-left: auto;
             margin-right: auto;
-            padding-left: 25px;
+            /* padding-left: 25px; */
             /* z-index: 0; */
         }
 
@@ -235,9 +235,11 @@
             border-radius: 5px;
             background-color: white;
             display: none;
+            flex-wrap: wrap;
+            transition: 0.3s;
+            box-shadow: 0px 0px 20px #6b737b;
+            z-index: 3;
         }
-        /* ::placeholder {
-        } */
 
         .searchBox {
             width: fit-content;
@@ -250,6 +252,61 @@
             height: auto;
         }
 
+        .categoryListBox {
+            width: 90px;
+            height: 20px;
+            text-align: center;
+        }
+
+        .categoryListBox:hover {
+            background-color: #E8E8E8;
+            transition: 0.5s;
+        }
+
+        @media screen and (max-width: 1200px) {
+            main {
+                max-width: 574px;
+                z-index: -1;
+            }
+            nav {
+                position: sticky;
+                top: 0px;
+                padding: 0 10px;
+                z-index: 3;
+                background-color: white;
+            }
+            .helloPage {
+                position: sticky;
+                top: 60px;
+                height: auto;
+                z-index: 3;
+                overflow: visible;
+            }
+
+            .slogan {
+                max-width: none;
+                max-width: 600px;
+            }
+        }
+
+        @media screen and (max-width: 800px) {
+            main {
+                max-width: 300px;
+            }
+
+            input {
+                width: 300px;
+            }
+            
+            .dropDownBox {
+                width: 355px;
+            }
+
+            .slogan {
+                max-width: 300px;
+                top:15px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -270,7 +327,6 @@
                 <button class="serachbtn" onclick="searchKeyword()"><img class="searchImg" src="icon_search.png" alt=""></button>
             </div>
             <div class="dropDownBox" id="dropDownBox">
-                This is a box
             </div>
         </div>
     </div>
@@ -294,6 +350,7 @@
 </body>
 <script>
     let pageIndex = 0;
+
     document.getElementById("searchTxt").addEventListener("click", function() {
         toggle(document.querySelectorAll(".dropDownBox"))
     });
@@ -315,7 +372,7 @@
                     element.style.display = '';
 
                     if (isElemHidden(element)) {
-                        element.style.display = specifyDisplay || 'block';
+                        element.style.display = specifyDisplay || 'flex';
                     }
                 }else {
                         element.style.display = 'none';
@@ -331,7 +388,8 @@
                 }
             }
         }else return
-    } 
+    }
+     
     function fetchAttractionsJSON(nextPage) {
         if (nextPage != null){
             return fetch(`http://52.74.43.7:3000/api/attractions?page=${nextPage}`)
@@ -342,7 +400,14 @@
         } else return
     }
 
-    function fectchAttractionJsonWithKeywords(keyword, pageIndex) {
+    function fetchCategoriesJson() {
+        return fetch("http://52.74.43.7:3000/api/categories").then((response) => {
+            myJson = response.json()
+            return myJson
+        })
+    }
+
+    function fetchAttractionJsonWithKeywords(keyword, pageIndex) {
         return fetch(`http://52.74.43.7:3000/api/attractions?page=${pageIndex}&keyword=${keyword}`)
         .then((response) => {
             myJson = response.json();
@@ -360,7 +425,7 @@
             }
         )
         event.preventDefault();
-        fectchAttractionJsonWithKeywords(keyword, 0)
+        fetchAttractionJsonWithKeywords(keyword, 0)
         .then(function(Myjson) {
         appendAttractions(Myjson);
         lastDivObserver.observe(document.querySelector(".picBox:last-child"));
@@ -435,7 +500,7 @@
         }
         else if (pageIndex != null & keyword != null) {
             shouldPerformRequest = !shouldPerformRequest;
-            fectchAttractionJsonWithKeywords(keyword).then(function(jsonResp) {
+            fetchAttractionJsonWithKeywords(keyword).then(function(jsonResp) {
             shouldPerformRequest = !shouldPerformRequest;
             appendAttractions(jsonResp);
             lastDivObserver.observe(document.querySelector(".picBox:last-child"));   
@@ -451,6 +516,24 @@
         lastDivObserver.unobserve(lastDiv.target)
     }, {threshold: 1}); 
     
+    fetchCategoriesJson()
+        .then((Myjson) => {
+        for(let i = 0; i < Myjson.data.length; i ++) {
+            let category = Myjson.data[i]
+            let categoryListBox = document.createElement("div")
+            categoryListBox.classList.add("categoryListBox")
+            categoryListBox.innerText = category
+            document.getElementById("dropDownBox").append(categoryListBox)
+            }
+            let categoryListBox = document.querySelectorAll(".categoryListBox")
+            let input = document.getElementById("searchTxt")
+            for (i = 0; i < categoryListBox.length; i++) {
+            categoryListBox[i].addEventListener("click", function(e) {
+                input.value = e.target.innerText;
+                searchKeyword();
+            })
+            }
+        })
 
     fetchAttractionsJSON(pageIndex)
         .then((Myjson) => {
