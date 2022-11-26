@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>台北一日遊</title>
+    <style>
+        @import url(https://fonts.googleapis.com/css2?family=Noto+Sans+TC&display=swap);
+        body {
+            padding: 0px;
+            margin: 0px;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        nav {
+            max-width: 1200px;
+            display: flex;
+            justify-content: space-between;
+            margin: 0 auto;
+        }
+
+        .navDiv1 {
+            display: flex;
+        }
+
+        .navDiv1 > button {
+            background-color: white;
+            border: none;
+            height: 30px;
+        }
+
+        .navDiv1 > button:hover {
+            cursor: pointer;
+            /* background-color: #757575; */
+            color: darkgray;
+        }
+
+        .navEle1 {
+            font-size: 30px;
+            padding: 10px;
+            color: #448899;
+            font-family: 'Noto Sans TC';
+            font-weight: 700;  
+        }
+
+        .navEle2 {
+            font-size: 16px;
+            padding: 20px 0px;
+            color: #666666;
+            font-weight: 500;
+        }
+
+        .navSubCSS1 {
+            margin-left: 10px;
+        }
+
+        .helloPage {
+            position: relative;
+            max-width: 1920px;
+            height: 320px;
+            margin: 0 auto;
+            overflow: hidden;
+            /* z-index: 1; */
+        }
+
+        .helloPage > img {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+        }
+
+        /* main {
+            width: 1920px;
+            margin: auto auto;
+            top: 600px;
+            height: 700px;
+            background-color: aquamarine;
+            padding-bottom: 110px;
+        } */
+
+        .slogan {
+            position: absolute;
+            max-width: 1200px;
+            top: 75px;
+            left: 0px;
+            right: 0px;
+            margin-left: auto;
+            margin-right: auto;
+            /* padding-left: 25px; */
+            /* z-index: 0; */
+        }
+
+        .slogan1 {
+            color:white;
+            /* color: black; */
+            font-weight: 700;
+            font-family: "Noto Sans TC";
+        }
+
+        .text1 {
+            font-size: 28px;
+            font-family: "Noto Sans TC";
+        }
+
+        .text2 {
+            font-size: 16px;
+            font-family: "Noto Sans TC";
+        }
+
+        footer {
+            justify-content: center;
+            align-items: center;
+            display: flex;
+            max-width: 1920px;
+            height: 104px;
+            margin: 0 auto;
+            position: fixed;
+            bottom: 0px;
+            left: 0px;
+            right: 0px;
+            background-color: #757575;
+            z-index: 0;
+        }
+
+        .footerStr {
+            height: fit-content;
+            width: fit-content;
+            color: white;
+            font-size: 16px;
+            font-weight: 700;
+            font-family: "Noto Sans TC";
+            z-index: 1;
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 0 auto;
+            margin-top: 50px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 124px;
+        }
+
+        .picBox {
+            display: flex;
+            position: relative;
+            /* background-color: burlywood; */
+            width: 270px;
+            margin-bottom: 30px;
+            height: 242px;border: 1px solid #E8E8E8;
+            border-radius: 5px;
+            
+        }
+
+        .boxImgs {
+            width: 270px;
+            height: 197px;
+            object-fit: fill;
+        }
+
+        .siteNames {
+            position: absolute;
+            top: 155px;
+            left: 0px;
+            padding-left: 10px;
+            padding-bottom: 10px;
+            padding-top: 10px;
+            width: 260px;
+            height: auto;
+            background-color: rgba(0, 0, 0, .6);
+            color: white;
+            font-weight: 700;
+            font-size: 16px;
+            font-family: "Noto Sans TC";
+        }
+
+        .mrtDiv {
+            position: absolute;
+            color: #757575;
+            font-size: 16px;
+            font-weight: 700;
+            top: 197px;
+            left: 0;
+            padding-left: 10px;
+            padding-top: 10px;
+            padding-bottom: 10px;
+            font-family: "Noto Sans TC";
+        }
+
+        .cats {
+            position: absolute;
+            top: 197px;
+            right: 0px;
+            color: #757575;
+            font-size: 16px;
+            font-weight: 700;
+            font-family: "Noto Sans TC";
+            padding-right: 10px;
+            padding-top: 10px;
+            padding-bottom: 10px;
+        }
+
+        .serachbtn {
+            width: 40px;
+            height: 40px;
+            border: none;
+            background-color:#448899;
+            border-top-right-radius: 5px;
+            border-bottom-right-radius: 5px;
+        }
+
+        input {
+            padding: 0px;
+            height: 40px;
+            width: 400px;
+            border-width: 0px;
+            font-size: 16px;
+            padding-left: 15px;
+            border-top-left-radius: 5px;
+            border-bottom-left-radius: 5px;
+            /* position: relative; */
+        }
+
+        .dropDownBox {
+            margin-top: 3px;
+            width: 415px;
+            height: 160px;
+            left: 0px;
+            top: 45px;
+            border: #757575;
+            border-radius: 5px;
+            background-color: white;
+            display: none;
+            flex-wrap: wrap;
+            transition: 0.3s;
+            box-shadow: 0px 0px 20px #6b737b;
+            z-index: 3;
+        }
+
+        .searchBox {
+            width: fit-content;
+            display: flex;
+            align-items: center;
+        }
+
+        .searchImg {
+            width: 100%;
+            height: auto;
+        }
+
+        .categoryListBox {
+            width: 90px;
+            height: 20px;
+            text-align: center;
+        }
+
+        .categoryListBox:hover {
+            background-color: #E8E8E8;
+            transition: 0.5s;
+        }
+
+        @media screen and (max-width: 1200px) {
+            main {
+                max-width: 574px;
+                z-index: -1;
+            }
+            nav {
+                position: sticky;
+                top: 0px;
+                padding: 0 10px;
+                z-index: 3;
+                background-color: white;
+            }
+            .helloPage {
+                position: sticky;
+                top: 60px;
+                height: auto;
+                z-index: 3;
+                overflow: visible;
+            }
+
+            .slogan {
+                max-width: none;
+                max-width: 600px;
+            }
+        }
+
+        @media screen and (max-width: 800px) {
+            main {
+                max-width: 300px;
+            }
+
+            input {
+                width: 300px;
+            }
+            
+            .dropDownBox {
+                width: 355px;
+            }
+
+            .slogan {
+                max-width: 300px;
+                top:15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="navEle1">台北一日遊</div>
+        <div class="navDiv1">
+            <button class="navEle2">預定行程</button>
+            <button class="navEle2 navSubCSS1">登入/註冊</button>
+        </div>
+    </nav>
+    <div class="helloPage">
+        <img src={{ url_for('static', filename = 'welcome.png') }} alt="Taipei 101">
+        <div class="slogan">
+            <div class="slogan1 text1">輕鬆享受台北一日悠閒</div>
+            <div class="slogan1 text2">探索每個角落，體驗城市深度鐵道行程</div>
+            <div class="searchBox">
+                <input type="text" placeholder="輸入景點名稱查詢" id="searchTxt" name="searchedAttraction">
+                <button class="serachbtn" onclick="searchKeyword()"><img class="searchImg" src={{ url_for('static', filename = 'icon_search.png') }} alt=""></button>
+            </div>
+            <div class="dropDownBox" id="dropDownBox">
+            </div>
+        </div>
+    </div>
+    <main>
+        <div class="picBox"></div>
+        <div class="picBox"></div>
+        <div class="picBox"></div>
+        <div class="picBox"></div>
+        <div class="picBox"></div>
+        <div class="picBox"></div>
+        <div class="picBox"></div>
+        <div class="picBox"></div>
+        <div class="picBox"></div>
+        <div class="picBox"></div>
+        <div class="picBox"></div>
+        <div class="picBox"></div>
+    </main>
+    <footer>
+        <div class="footerStr">COPYRIGHT © 2021 台北一日遊</div>
+    </footer>
+</body>
+<script>
+    let pageIndex = 0;
+
+    document.getElementById("searchTxt").addEventListener("click", function() {
+        toggle(document.querySelectorAll(".dropDownBox"))
+    });
+    
+    document.addEventListener("click", function (e) {
+        let dropDownBox = document.getElementById("dropDownBox")
+        if(e.target.id !== "searchTxt") {
+            dropDownBox.style.display ='none';
+        }
+        else return
+    })
+
+    function toggle(elements, specifyDisplay) {
+        elements = elements.length? elements : [elements]
+        if (typeof(elements) != null){
+            for (index = 0; index < elements.length; index++) {
+                element = elements[index];
+                if (isElemHidden(element)) {
+                    element.style.display = '';
+
+                    if (isElemHidden(element)) {
+                        element.style.display = specifyDisplay || 'flex';
+                    }
+                }else {
+                        element.style.display = 'none';
+
+
+                    }
+            
+            function isElemHidden(element) {
+                if (element != null){
+                return window.getComputedStyle(element, null).getPropertyValue('display') === 'none';
+                }else return
+            
+                }
+            }
+        }else return
+    }
+     
+    function fetchAttractionsJSON(nextPage) {
+        if (nextPage != null){
+            return fetch(`http://52.74.43.7:3000/api/attractions?page=${nextPage}`)
+            .then(function(response) {
+                myJson = response.json();
+                return myJson
+            })
+        } else return
+    }
+
+    function fetchCategoriesJson() {
+        return fetch("http://52.74.43.7:3000/api/categories").then((response) => {
+            myJson = response.json()
+            return myJson
+        })
+    }
+
+    function fetchAttractionJsonWithKeywords(keyword, pageIndex) {
+        return fetch(`http://52.74.43.7:3000/api/attractions?page=${pageIndex}&keyword=${keyword}`)
+        .then((response) => {
+            myJson = response.json();
+            pageIndex = myJson.nextPage;
+            return myJson
+        })
+    }
+    
+    let keyword = "";
+    function searchKeyword() {
+        const picBoxes = document.querySelectorAll(".picBox");
+        keyword = document.getElementById("searchTxt").value;
+        picBoxes.forEach( (ele) => {
+                ele.remove();
+            }
+        )
+        event.preventDefault();
+        fetchAttractionJsonWithKeywords(keyword, 0)
+        .then(function(Myjson) {
+        appendAttractions(Myjson);
+        lastDivObserver.observe(document.querySelector(".picBox:last-child"));
+        document.getElementById("searchTxt").value = '';
+        }).catch( () =>{
+            let main = document.querySelector("main");
+            notFoundMsg = document.createElement("div");
+            notFoundMsg.classList.add("picBox");
+            notFoundMsg.innerText = "找無匹配景點";
+            main.appendChild(notFoundMsg);
+            }
+        )
+    }
+
+    function appendAttractions(jsonResp) {
+        pageIndex = jsonResp.nextPage;
+        if (jsonResp.error != true) {
+            let main = document.querySelector("main")
+            for (let i = 0; i < jsonResp.data.length; i++) {
+                let PicBox = document.createElement("div");
+                PicBox.classList.add("picBox");
+                picSRC = jsonResp.data[i].images[0];
+                let image = document.createElement("img");
+                image.setAttribute('src', picSRC);
+                image.classList.add("boxImgs")
+                PicBox.appendChild(image);
+                main.append(PicBox);
+
+
+                siteNames = jsonResp.data[i].name;
+                let SiteName = document.createElement("div");
+                SiteName.innerText = siteNames;
+                SiteName.classList.add("siteNames");
+                PicBox.appendChild(SiteName);
+
+                mrts = jsonResp.data[i].mrt;
+                let mrt = document.createElement("div");
+                mrt.classList.add("mrtDiv");
+                mrt.innerText = mrts;
+                PicBox.appendChild(mrt);    
+                
+                cats = jsonResp.data[i].category;
+                let category = document.createElement("div");
+                category.classList.add("cats");
+                category.innerText = cats;
+                PicBox.appendChild(category);
+
+            }
+        } else {
+            let main = document.querySelector("main");
+            notFoundMsg = document.createElement("div");
+            notFoundMsg.classList.add("picBox");
+            notFoundMsg.innerText = "資料庫發生錯誤";
+            main.appendChild(notFoundMsg);
+            return
+        }
+    }
+    
+
+    let shouldPerformRequest = true;
+    function createMoreDivs(keyword) {
+        if (!shouldPerformRequest) {
+            return
+        }
+        else if (pageIndex != null & keyword == null) {
+            shouldPerformRequest = !shouldPerformRequest;
+            fetchAttractionsJSON(pageIndex).then(function(jsonResp) {
+                shouldPerformRequest = !shouldPerformRequest;
+                appendAttractions(jsonResp);
+                lastDivObserver.observe(document.querySelector(".picBox:last-child"));   
+            })
+        }
+        else if (pageIndex != null & keyword != null) {
+            shouldPerformRequest = !shouldPerformRequest;
+            fetchAttractionJsonWithKeywords(keyword).then(function(jsonResp) {
+            shouldPerformRequest = !shouldPerformRequest;
+            appendAttractions(jsonResp);
+            lastDivObserver.observe(document.querySelector(".picBox:last-child"));   
+            })
+        }
+        else return
+    }
+
+    const lastDivObserver = new IntersectionObserver(entries => {
+        const lastDiv = entries[0]
+        if (!lastDiv.isIntersecting) return; 
+        createMoreDivs(keyword)
+        lastDivObserver.unobserve(lastDiv.target)
+    }, {threshold: 1}); 
+    
+    fetchCategoriesJson()
+        .then((Myjson) => {
+        for(let i = 0; i < Myjson.data.length; i ++) {
+            let category = Myjson.data[i]
+            let categoryListBox = document.createElement("div")
+            categoryListBox.classList.add("categoryListBox")
+            categoryListBox.innerText = category
+            document.getElementById("dropDownBox").append(categoryListBox)
+            }
+            let categoryListBox = document.querySelectorAll(".categoryListBox")
+            let input = document.getElementById("searchTxt")
+            for (i = 0; i < categoryListBox.length; i++) {
+            categoryListBox[i].addEventListener("click", function(e) {
+                input.value = e.target.innerText;
+                searchKeyword();
+            })
+            }
+        })
+
+    fetchAttractionsJSON(pageIndex)
+        .then((Myjson) => {
+            PicBoxes = document.querySelectorAll(".picBox");
+            pageIndex = Myjson.nextPage;
+            for (let i = 0; i < Myjson.data.length; i ++) {
+                PicBoxes = document.querySelectorAll(".picBox");
+                picSRC = Myjson.data[i].images[0];
+                let image = document.createElement("img");
+                image.setAttribute('src', picSRC);
+                image.classList.add("boxImgs")
+                PicBoxes[i].appendChild(image);
+
+                siteNames = Myjson.data[i].name;
+                let SiteName = document.createElement("div");
+                SiteName.innerText = siteNames;
+                SiteName.classList.add("siteNames");
+                PicBoxes[i].appendChild(SiteName);
+
+                mrts = Myjson.data[i].mrt;
+                let mrt = document.createElement("div");
+                mrt.classList.add("mrtDiv");
+                mrt.innerText = mrts;
+                PicBoxes[i].appendChild(mrt);    
+                
+                cats = Myjson.data[i].category;
+                let category = document.createElement("div");
+                category.classList.add("cats");
+                category.innerText = cats;
+                PicBoxes[i].appendChild(category);
+            }
+            lastDivObserver.observe(document.querySelector(".picBox:last-child")); 
+        })
+</script>
+</html>
