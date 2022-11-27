@@ -41,6 +41,18 @@ def requestCon(sql, args):
 		connection_object.close()
 		return record
 
+def makeCategoriesRes(list):
+	dataDict = dict()
+	temp = []
+
+	for category in list:
+		temp.append(category[0])
+
+	dataDict["data"] = temp	
+	response = jsonify(dataDict)
+	response.headers.add('Access-Control-Allow-Origin', '*')
+	return response
+
 def makeAttractionsResp(list, page):
 	dataDict = dict()
 	dataDict["data"] = dict()
@@ -83,20 +95,28 @@ def makeAttractionsResp(list, page):
 		dataDict["data"] = temp
 		if len(list) >= 13:
 			dataDict["nextPage"] = int(page) + 1
-			return jsonify(dataDict)
+			response = jsonify(dataDict)
+			response.headers.add('Access-Control-Allow-Origin', '*')
+			return response
 			
 		else:
 			dataDict["nextPage"] = None
-			return jsonify(dataDict)
+			response = jsonify(dataDict)
+			response.headers.add('Access-Control-Allow-Origin', '*')
+			return response
 	else:
 		dataDict["data"] = temp[0]
-		return jsonify(dataDict)
+		response = jsonify(dataDict)
+		response.headers.add('Access-Control-Allow-Origin', '*')
+		return response
 
 def err(e, statusCode):
 	msg = dict()
 	msg["error"] = True
 	msg["message"] = e
-	return make_response(jsonify(msg), statusCode)
+	response = jsonify(msg)
+	response.headers.add('Access-Control-Allow-Origin', '*')
+	return make_response(msg, statusCode)
 
 
 def appendURLs(sites):
@@ -114,6 +134,19 @@ def appendURLs(sites):
 		newSites.append(site)
 	return newSites
 
+@app.route("/api/categories")
+def lookUpCateAPI():
+	if request.method == 'GET':
+		sql = """
+		select * from category;
+		"""
+		categories = requestCon(sql, None)
+		categoriesJson = makeCategoriesRes(categories)
+		if not categories:
+			msg = "伺服器錯誤"
+			return err(msg, 500)
+		else:
+			return categoriesJson
 
 @app.route("/api/attractions")
 def lookUpSitesAPI():
