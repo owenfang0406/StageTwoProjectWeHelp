@@ -92,7 +92,6 @@
             margin-left: auto;
             margin-right: auto;
             z-index: 2;
-            padding-left: 10px;
         }
 
         .slogan1 {
@@ -291,7 +290,6 @@
             }
 
             .slogan {
-                max-width: none;
                 max-width: 600px;
                 top: 145px;
             }
@@ -299,7 +297,7 @@
 
         @media screen and (max-width: 800px) {
             nav {
-                min-width: 300px;
+                min-width: 320px;
             }
 
             main {
@@ -342,20 +340,10 @@
     </nav>
     <div class="helloPage">
         <img src={{ url_for('static', filename = 'welcome.png') }} alt="Taipei 101">
-        <!-- <div class="slogan">
-            <div class="slogan1 text1">輕鬆享受台北一日悠閒</div>
-            <div class="slogan1 text2">探索每個角落，體驗城市深度鐵道行程</div>
-            <div class="searchBox">
-                <input type="text" placeholder="輸入景點名稱查詢" id="searchTxt" name="searchedAttraction">
-                <button class="serachbtn" onclick="searchKeyword()"><img class="searchImg" src={{ url_for('static', filename = 'icon_search.png') }} alt=""></button>
-            </div>
-            <div class="dropDownBox" id="dropDownBox">
-            </div>
-        </div> -->
     </div>
     <div class="slogan">
         <div class="slogan1 text1">輕鬆享受台北一日悠閒</div>
-        <div class="slogan1 text2">探索每個角落，體驗城市深度鐵道行程</div>
+        <div class="slogan1 text2">探索每個角落，體驗城市深度旅遊行程</div>
         <div class="searchBox">
             <input type="text" placeholder="輸入景點名稱查詢" id="searchTxt" name="searchedAttraction">
             <button class="serachbtn" onclick="searchKeyword()"><img class="searchImg" src={{ url_for('static', filename = 'icon_search.png') }} alt=""></button>
