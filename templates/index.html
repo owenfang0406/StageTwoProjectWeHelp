@@ -19,6 +19,12 @@
             display: flex;
             justify-content: space-between;
             margin: 0 auto;
+            position: fixed;
+            right: 0px;
+            left: 0px;
+            top: 0px;
+            z-index: 3;
+            background-color: white;
         }
 
         .navDiv1 {
@@ -57,46 +63,40 @@
         }
 
         .helloPage {
-            position: relative;
+            position: fixed;
+            left: 0px;
+            right: 0px;
             max-width: 1920px;
             height: 320px;
             margin: 0 auto;
             overflow: hidden;
-            /* z-index: 1; */
+            z-index: 3;
         }
 
         .helloPage > img {
             width: 100%;
-            height: auto;
+            height: 320px;
             object-fit: cover;
+            object-position: top;
         }
 
-        /* main {
-            width: 1920px;
-            margin: auto auto;
-            top: 600px;
-            height: 700px;
-            background-color: aquamarine;
-            padding-bottom: 110px;
-        } */
-
         .slogan {
-            position: absolute;
+            position: fixed;
             max-width: 1200px;
             top: 75px;
             left: 0px;
             right: 0px;
             margin-left: auto;
             margin-right: auto;
-            /* padding-left: 25px; */
-            /* z-index: 0; */
+            z-index: 3;
+            padding-left: 10px;
         }
 
         .slogan1 {
             color:white;
-            /* color: black; */
             font-weight: 700;
             font-family: "Noto Sans TC";
+            padding-bottom: 30px;
         }
 
         .text1 {
@@ -116,10 +116,6 @@
             max-width: 1920px;
             height: 104px;
             margin: 0 auto;
-            position: fixed;
-            bottom: 0px;
-            left: 0px;
-            right: 0px;
             background-color: #757575;
             z-index: 0;
         }
@@ -142,18 +138,19 @@
             flex-wrap: wrap;
             justify-content: space-between;
             align-items: center;
-            padding-bottom: 124px;
+            padding-bottom: 35px;
+            padding-top: 380px;
+            z-index: 2;
         }
 
         .picBox {
             display: flex;
             position: relative;
-            /* background-color: burlywood; */
             width: 270px;
             margin-bottom: 30px;
             height: 242px;border: 1px solid #E8E8E8;
             border-radius: 5px;
-            
+            z-index: -1;
         }
 
         .boxImgs {
@@ -222,10 +219,12 @@
             padding-left: 15px;
             border-top-left-radius: 5px;
             border-bottom-left-radius: 5px;
+            font-weight: bold;
             /* position: relative; */
         }
 
         .dropDownBox {
+            padding-top: 15px;
             margin-top: 3px;
             width: 415px;
             height: 160px;
@@ -253,9 +252,10 @@
         }
 
         .categoryListBox {
-            width: 90px;
+            width: 30%;
             height: 20px;
             text-align: center;
+
         }
 
         .categoryListBox:hover {
@@ -265,8 +265,9 @@
 
         @media screen and (max-width: 1200px) {
             main {
-                max-width: 574px;
+                max-width: 600px;
                 z-index: -1;
+                padding-top: 0px;
             }
             nav {
                 position: sticky;
@@ -286,6 +287,8 @@
             .slogan {
                 max-width: none;
                 max-width: 600px;
+                top: 80px;
+                z-index: 3;
             }
         }
 
@@ -299,12 +302,24 @@
             }
             
             .dropDownBox {
-                width: 355px;
+                width: 430px;
             }
 
             .slogan {
                 max-width: 300px;
-                top:15px;
+                top:70px;
+            }
+        
+            .boxImgs{
+                width: 315px;
+            }
+
+            .siteNames{
+                width: 305px;
+            }
+
+            .picBox {
+                width: 315px;
             }
         }
     </style>
@@ -319,7 +334,7 @@
     </nav>
     <div class="helloPage">
         <img src={{ url_for('static', filename = 'welcome.png') }} alt="Taipei 101">
-        <div class="slogan">
+        <!-- <div class="slogan">
             <div class="slogan1 text1">輕鬆享受台北一日悠閒</div>
             <div class="slogan1 text2">探索每個角落，體驗城市深度鐵道行程</div>
             <div class="searchBox">
@@ -328,6 +343,16 @@
             </div>
             <div class="dropDownBox" id="dropDownBox">
             </div>
+        </div> -->
+    </div>
+    <div class="slogan">
+        <div class="slogan1 text1">輕鬆享受台北一日悠閒</div>
+        <div class="slogan1 text2">探索每個角落，體驗城市深度鐵道行程</div>
+        <div class="searchBox">
+            <input type="text" placeholder="輸入景點名稱查詢" id="searchTxt" name="searchedAttraction">
+            <button class="serachbtn" onclick="searchKeyword()"><img class="searchImg" src={{ url_for('static', filename = 'icon_search.png') }} alt=""></button>
+        </div>
+        <div class="dropDownBox" id="dropDownBox">
         </div>
     </div>
     <main>
@@ -408,6 +433,7 @@
     }
 
     function fetchAttractionJsonWithKeywords(keyword, pageIndex) {
+        if (pageIndex == null || undefined) return
         return fetch(`http://52.74.43.7:3000/api/attractions?page=${pageIndex}&keyword=${keyword}`)
         .then((response) => {
             myJson = response.json();
@@ -429,7 +455,7 @@
         .then(function(Myjson) {
         appendAttractions(Myjson);
         lastDivObserver.observe(document.querySelector(".picBox:last-child"));
-        document.getElementById("searchTxt").value = '';
+        // document.getElementById("searchTxt").value = '';
         }).catch( () =>{
             let main = document.querySelector("main");
             notFoundMsg = document.createElement("div");
@@ -490,7 +516,7 @@
         if (!shouldPerformRequest) {
             return
         }
-        else if (pageIndex != null & keyword == null) {
+        else if (pageIndex != null & keyword == '' || null) {
             shouldPerformRequest = !shouldPerformRequest;
             fetchAttractionsJSON(pageIndex).then(function(jsonResp) {
                 shouldPerformRequest = !shouldPerformRequest;
@@ -498,9 +524,17 @@
                 lastDivObserver.observe(document.querySelector(".picBox:last-child"));   
             })
         }
+        // else if (pageIndex == undefined & keyword == '') {
+        //     shouldPerformRequest = !shouldPerformRequest;
+        //     fetchAttractionsJSON(0).then(function(jsonResp) {
+        //     shouldPerformRequest = !shouldPerformRequest;
+        //     appendAttractions(jsonResp);
+        //     lastDivObserver.observe(document.querySelector(".picBox:last-child"));
+        //     })
+        // }
         else if (pageIndex != null & keyword != null) {
             shouldPerformRequest = !shouldPerformRequest;
-            fetchAttractionJsonWithKeywords(keyword).then(function(jsonResp) {
+            fetchAttractionJsonWithKeywords(keyword, pageIndex).then(function(jsonResp) {
             shouldPerformRequest = !shouldPerformRequest;
             appendAttractions(jsonResp);
             lastDivObserver.observe(document.querySelector(".picBox:last-child"));   
@@ -511,10 +545,16 @@
 
     const lastDivObserver = new IntersectionObserver(entries => {
         const lastDiv = entries[0]
-        if (!lastDiv.isIntersecting) return; 
+        if (!lastDiv.isIntersecting) return;
+
+        else if(pageIndex == null) {
+        lastDivObserver.unobserve(lastDiv.target)
+        }
+        else {
         createMoreDivs(keyword)
         lastDivObserver.unobserve(lastDiv.target)
-    }, {threshold: 1}); 
+        console.log(pageIndex,keyword)
+        , {threshold: 1}}})
     
     fetchCategoriesJson()
         .then((Myjson) => {
