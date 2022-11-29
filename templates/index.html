@@ -154,7 +154,7 @@
             margin-bottom: 30px;
             height: 242px;border: 1px solid #E8E8E8;
             border-radius: 5px;
-            z-index: -1;
+            z-index: 2;
         }
 
         .boxImgs {
@@ -353,18 +353,18 @@
         </div>
     </div>
     <main>
-        <div class="picBox"></div>
-        <div class="picBox"></div>
-        <div class="picBox"></div>
-        <div class="picBox"></div>
-        <div class="picBox"></div>
-        <div class="picBox"></div>
-        <div class="picBox"></div>
-        <div class="picBox"></div>
-        <div class="picBox"></div>
-        <div class="picBox"></div>
-        <div class="picBox"></div>
-        <div class="picBox"></div>
+        <a class="picBox"></a>
+        <a class="picBox"></a>
+        <a class="picBox"></a>
+        <a class="picBox"></a>
+        <a class="picBox"></a>
+        <a class="picBox"></a>
+        <a class="picBox"></a>
+        <a class="picBox"></a>
+        <a class="picBox"></a>
+        <a class="picBox"></a>
+        <a class="picBox"></a>
+        <a class="picBox"></a>
     </main>
     <footer>
         <div class="footerStr">COPYRIGHT © 2021 台北一日遊</div>
@@ -468,7 +468,10 @@
         if (jsonResp.error != true) {
             let main = document.querySelector("main")
             for (let i = 0; i < jsonResp.data.length; i++) {
-                let PicBox = document.createElement("div");
+                let id = jsonResp.data[i].id;
+                let PicBox = document.createElement("a");
+                PicBox.href = `/attraction/${id}`
+                PicBox.target = "_blank";
                 PicBox.classList.add("picBox");
                 picSRC = jsonResp.data[i].images[0];
                 let image = document.createElement("img");
@@ -576,14 +579,18 @@
         .then((Myjson) => {
             PicBoxes = document.querySelectorAll(".picBox");
             pageIndex = Myjson.nextPage;
+            
             for (let i = 0; i < Myjson.data.length; i ++) {
-                PicBoxes = document.querySelectorAll(".picBox");
+                let id = Myjson.data[i].id
+                // PicBoxes = document.querySelectorAll(".picBox");
                 picSRC = Myjson.data[i].images[0];
+                // let links = document.createElement("a");
                 let image = document.createElement("img");
+                PicBoxes[i].href = `/attraction/${id}`
+                PicBoxes[i].target = "_blank";
                 image.setAttribute('src', picSRC);
                 image.classList.add("boxImgs")
                 PicBoxes[i].appendChild(image);
-
                 siteNames = Myjson.data[i].name;
                 let SiteName = document.createElement("div");
                 SiteName.innerText = siteNames;
