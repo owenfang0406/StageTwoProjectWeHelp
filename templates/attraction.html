@@ -106,7 +106,7 @@
 
         .attractionPicsSliderContainer {
             position: relative;
-            width: 540px;
+            width: calc(50% - 20px);
             height: 406px;
             background-color: darkcyan;
         }
@@ -114,7 +114,7 @@
         .attractionImg {
             width: 100%;
             height: 100%;
-            object-fit: fill;
+            object-fit: cover;
         }
         .mySlides {
             /* display: none; */
@@ -368,18 +368,19 @@
 
         @media screen and (max-width: 1200px) {
             .attractionPicsSliderContainer {
-                width: 466px;
+                width: calc(78% - 2px);
                 height: 350px;
                 overflow: hidden;
-                object-fit: fill;
+                object-fit: cover;
             }
 
             .mySlides {
                 width: 466px;
                 height: 350px;
             }
+
             main {
-                width: 400px;
+                width: 600px;
                 justify-content: center;
             }
 
