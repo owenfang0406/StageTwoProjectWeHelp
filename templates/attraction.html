@@ -370,14 +370,20 @@
 
         @media screen and (max-width: 1200px) {
             .attractionPicsSliderContainer {
+                display: flex;
+                justify-content: center;
                 width: 100%;
                 height: 350px;
                 overflow: hidden;
                 object-fit: cover;
             }
+            
+            .prev {
+                left: 0px;
+            }
 
             .mySlides {
-                width: 466px;
+                width: 100%;
                 height: 350px;
             }
 
