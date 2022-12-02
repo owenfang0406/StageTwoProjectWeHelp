@@ -1,0 +1,618 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attraction</title>
+    <style>
+        @import url(https://fonts.googleapis.com/css2?family=Noto+Sans+TC&display=swap);
+        body {
+            padding: 0px;
+            margin: 0px;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        nav {
+            max-width: 1200px;
+            display: flex;
+            justify-content: space-between;
+            margin: 0 auto;
+            position: fixed;
+            right: 0px;
+            left: 0px;
+            top: 0px;
+            z-index: 3;
+            background-color: white;
+            align-items: center;
+        }
+
+        .navDiv1 {
+            display: flex;
+            height: 64px;
+            padding-right: 10px;
+        }
+
+        .navDiv1 > button {
+            background-color: white;
+            border: none;
+            height: 30px;
+        }
+
+        .navDiv1 > button:hover {
+            cursor: pointer;
+            /* background-color: #757575; */
+            color: darkgray;
+        }
+
+        .navEle1 {
+            font-size: 30px;
+            padding: 10px;
+            color: #448899;
+            font-family: 'Noto Sans TC';
+            font-weight: 700;  
+        }
+
+        .navEle2 {
+            font-size: 16px;
+            padding: 20px 0px;
+            color: #666666;
+            font-weight: 500;
+        }
+
+        .navSubCSS1 {
+            margin-left: 10px;
+        }
+
+        main {
+            max-width: 1180px;
+            margin: 0 auto;
+            margin-top: 70px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 35px;
+            z-index: 2;
+            /* background-color: burlywood; */
+        }
+
+        .attractionTitles {
+            max-width: 600px;
+            height: 104px;
+        }
+
+        .siteTitle {
+            height: 33px;
+            max-width: 600px;
+            /* background-color: #E8E8E8; */
+            display: flex;
+            align-items: center;
+            font-size: 24px;
+            font-family: 'Noto Sans TC';
+            color: #666666;
+            line-height: 24px;
+            margin-bottom: 15px;
+            padding-left: 15px;
+        }
+
+        .siteTitle2 {
+            max-width: 600px;
+            height: auto;
+            color: #666666;
+            /* background-color: #E8E8E8; */
+            font-family: 'Noto Sans TC';
+            font-size: 16px;
+            padding-left: 15px;
+        }
+
+        .attractionPicsSliderContainer {
+            position: relative;
+            width: calc(50% - 20px);
+            height: 406px;
+            /* background-color: darkcyan; */
+        }
+
+        .attractionImg {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .mySlides {
+            /* display: none; */
+            width: 100%;
+            height: 100%;
+        }
+
+        .prev, .next {
+            cursor: pointer;
+            position: absolute;
+            top: 50%;
+            width: auto;
+            margin-top: -22px;
+            padding: 16px;
+            opacity: 0.7;
+        }
+
+        .next {
+            right: 0px;
+        }
+
+        .prev:hover, .next:hover {
+            opacity: 0.5;
+        }
+
+        .dotsIndicators{
+            /* padding: 8px 12px; */
+            position: absolute;
+            bottom: 8px;
+            width: 100%;
+        }
+
+        .dot {
+            cursor: pointer;
+            height: 15px;
+            width: 15px;
+            margin: 0 2px;
+            background-color: white;
+            border-radius: 50%;
+            display: inline-block;
+            transition: background-color 0.6s ease;
+        }
+
+        .attractionBookingInfo {
+            width: 600px;
+            height: 406px;
+            /* background-color: dimgrey; */
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-start;
+        }
+
+        .active, .dot:hover {
+            box-shadow: inset 0px 0px 0px 2px white;
+            background-color: black;
+        }
+
+        .fade {
+            animation-name: fade;
+            animation-duration: 1.5s;
+        }
+
+        /* @keyframes fade {
+            from {opacity: .4}
+            to {opacity: 1}
+        } */
+
+        .bookingPanel {
+            width: 570px;
+            height: 272px;
+            background-color: #E8E8E8;
+            padding: 15px;
+            border-radius: 5px;
+        }
+
+        .bookingInfoStr1{
+            font-size: 16px;
+            font-weight: bold;
+            color: #666666;
+            padding-bottom: 15px;
+            font-family: 'Noto Sans TC';
+        }
+
+        .bookingInfoStr2{
+            font-size: 16px;
+            color: #666666;
+            padding-bottom: 15px;
+            font-family: 'Noto Sans TC';
+        }
+
+        .dateSelectorBox{
+            padding-bottom: 15px;
+        }
+
+        input[ type="date"] {
+            color: black;
+            width: 193px;
+            height: 35px;
+            font-size: 16px;
+            background-size: 24px;
+            border: none;
+            outline: none;
+            font-family: 'Noto Sans TC';
+        
+        }
+        
+        input[ type="date"]:hover {
+            border: 5px solid grey;
+            border-radius: 5px;
+        }
+
+        input[type='radio']:hover {
+            accent-color: #28525c;
+        }
+
+        input[type='radio'] {
+            width: 20px;
+            height: 20px;
+            accent-color: #448899;
+            display: flex;
+            align-items: center;
+            margin-bottom: 3px;
+            -webkit-appearance:none;
+        }
+
+        input[type='radio']:before {
+            content:'';
+            display:block;
+            width: 20px;
+            height: 20px;
+            margin: 20% auto;    
+            border-radius:50%;
+            background-color: white;   
+        }
+
+        input[type='radio']:checked:before {
+            box-shadow: inset 0px 0px 0px 2px white;
+            background-color: #448899;
+        }
+
+        .radioBtn{
+            padding-bottom: 15px;
+            display: flex;
+            align-items: center;
+        }
+
+        .prices {
+            display: flex;
+            color: #666666;
+            padding-bottom: 25px;
+            font-family: 'Noto Sans TC';
+        }
+
+        .priceForSelection {
+            font-size: 16px;
+            font-weight: 400;
+            color: #666666;
+            font-family: 'Noto Sans TC';
+            padding-left: 5px;
+        }
+
+        .bookingBtn{
+            width: 154px;
+            height: 36px;
+            background-color:#448899;
+            color: white;
+            border-radius: 5px;
+            font-family: 'Noto Sans TC';
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-style: none;
+        }
+
+        .bookingBtn:hover {
+            background-color: #173b45;
+            color: white;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        hr {
+            max-width: 1200px;
+            color: #E8E8E8;
+            margin-top: 30px;
+            border: 1px solid #E8E8E8;
+        }
+
+        .descriptionTxt {
+            max-width: 1180px;
+            padding: 0px 10px;
+            margin: 50px auto 20px auto;
+            color: #666666;
+            font-family: 'Noto Sans TC';
+            line-height: 23px;
+            font-weight:400;
+            font-size: 16px;
+        }
+
+        .address, .transportation, .description {
+            max-width: 1180px;
+            margin: 0px auto 20px auto;
+        }
+        .addressTile, .transportationTitle{
+            max-width: 1180px;
+            margin: 0px auto;
+            height: 32px;
+            color: #666666;
+            font-weight: bold;
+            font-family: 'Noto Sans TC';
+            padding: 0px 10px;
+            display: flex;
+            align-items: center;
+            font-size: 16px;
+        }
+
+        .addressTxt, .transportTxt{
+            color: #666666;
+            font-weight: 400;
+            max-width: 1180px;
+            padding: 0px 10px;
+            font-size: 16px;
+        }
+
+        .transportation {
+            max-width: 1180px;
+            margin: 0px auto;
+            margin-bottom: 120px;
+        }
+
+        footer {
+            justify-content: center;
+            align-items: center;
+            display: flex;
+            max-width: 1920px;
+            height: 104px;
+            margin: 0 auto;
+            background-color: #757575;
+            z-index: 0;
+        }
+
+        .footerStr {
+            height: fit-content;
+            width: fit-content;
+            color: white;
+            font-size: 16px;
+            font-weight: 700;
+            font-family: "Noto Sans TC";
+            z-index: 1;
+        }
+
+        @media screen and (max-width: 1200px) {
+            .attractionPicsSliderContainer {
+                display: flex;
+                justify-content: center;
+                width: 100%;
+                height: 350px;
+                overflow: hidden;
+                object-fit: cover;
+            }
+            
+            .prev {
+                left: 0px;
+            }
+
+            .mySlides {
+                width: 100%;
+                height: 350px;
+            }
+
+            main {
+                max-width: 600px;
+                justify-content: center;
+            }
+
+            .attractionBookingInfo {
+                max-width: 446px;
+                height: auto;
+                padding: 0px 10px;
+                justify-content: center;
+            }
+
+            .attractionTitles {
+                margin-top: 20px;
+                width: 360px;
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                height: auto;
+            }
+
+            .siteTitle {
+                width: 100%;
+            }
+
+            .siteTitle2 {
+                width: 100%;
+                margin-bottom: 20px;
+            }
+
+            .bookingPanel {
+                max-width: 330px; 
+                width: auto;
+            }
+
+            .transportation{
+                margin-bottom: 134px;
+            }
+            .descriptionTxt, .addressTile, .addressTxt, .transportationTitle, .transportTxt {
+                padding: 0px 20px;
+            }
+        }
+
+        /* @media screen and (max-width: 466px) {
+            .mySlides {
+                width: auto;
+                height: auto;
+            }
+            
+            .attractionPicsSliderContainer {
+                width: fit-content;
+                height: fit-content;
+            }
+            .attractionImg {
+                width: 466px;
+                height: 350px;
+                overflow: hidden;
+            }
+        } */
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="navEle1">台北一日遊</div>
+        <div class="navDiv1">
+            <button class="navEle2">預定行程</button>
+            <button class="navEle2 navSubCSS1">登入/註冊</button>
+        </div>
+    </nav>
+    <main>
+        <div id="attractionPicsSliderContainer" class="attractionPicsSliderContainer">
+            <!-- <div class="mySlide fade">
+            </div> -->
+
+            <img class="prev" src={{ url_for('static', filename = 'btn_leftArrow.png') }} onclick="plusSlides(-1)" alt="">
+            <img class="next" src={{ url_for('static', filename = 'btn_rightArrow.png') }} onclick="plusSlides(1)" alt="">
+            <div id="dotsIndicators" class="dotsIndicators" style="text-align:center;">
+            </div>
+        </div>
+        <div class="attractionBookingInfo">
+            <div id="attractionTitles" class="attractionTitles">
+            </div>
+            <div class="bookingPanel">
+            <div class="bookingInfoStr1">訂購導覽行程</div>
+            <div class="bookingInfoStr2">以此景點為中心的一日行程，帶您探索城市角落故事</div>
+            <div class="dateSelectorBox">
+                <label for="date" style="color:#666666; font-weight: bold;">選擇日期：</label>
+                <input type='date' value= ""/>
+            </div>
+            <div class="radioBtn">
+                <label for="price" style="color:#666666; font-weight: bold;">選擇時間：</label>
+                <input type="radio" id="beforeNoon" value="新台幣 2000 元" name="tourOption" onclick="tourSelection(this)">
+                <label for="beforeNoon" style="padding-left:5px;color:#666666; font-weight: bold;">上半天</label>
+                <input type="radio" id="afterNoon" value="新台幣 2500 元" name="tourOption" onclick="tourSelection(this)">
+                <label for="afterNoon" style="padding-left:5px;color:#666666; font-weight: bold;">下半天</label>
+            </div>
+            <div class="prices">
+                <div style="color:#666666; font-weight: bold;">導覽費用：</div>
+                <div class="priceForSelection" id="priceForSelection"></div>
+            </div>
+            <button class="bookingBtn">開始預約行程</button>
+            </div>
+        </div>
+    </main>
+    <hr>
+    <div id="description" class="description">
+
+    </div>
+    <div id="address" class="address">
+        <div class="addressTile">景點地址：</div>
+    </div>
+    <div id="transportation" class="transportation">
+        <div class="transportationTitle">交通方式：</div>
+    </div>
+    <footer>
+        <div class="footerStr">COPYRIGHT © 2021 台北一日遊</div>
+    </footer>
+</body>
+<script>
+let slideIndex = 1;
+function getCurrentURLID(){
+    let url = window.location.href;
+    let id = url.split("/");
+    return id[id.length - 1]
+}
+
+const id = getCurrentURLID();
+
+function plusSlides(n) {
+    slideIndex = slideIndex + n;
+    console.log("btnpage" + slideIndex)
+    showSlides(slideIndex);
+}
+
+function currentSlide(n) {
+    showSlides(n);
+}
+
+function showSlides(n) {
+    let slides = document.getElementsByClassName("mySlides");
+    let dots = document.getElementsByClassName("dot");
+    console.log(n)
+    console.log(slides.length)
+    if (n > slides.length) {slideIndex = 1}
+    if (n < 1) {slideIndex = slides.length}
+    for (i = 0; i < slides.length; i++) {
+        slides[i].style.display = "none";
+    }
+    for (i = 0; i < dots.length; i++) {
+    dots[i].className = dots[i].className.replace(" active", "");
+    }
+    slides[slideIndex-1].style.display = "block";  
+    dots[slideIndex-1].className += " active";
+}
+
+fetch(`http://52.74.43.7:3000/api/attraction/${id}`).then((resp) => (resp.json())).then((myJson)=>{
+    let SliderImgsLinks = myJson.data.images
+    let SiteTitle = myJson.data.name
+
+    let mrt = myJson.data.mrt
+    let category = myJson.data.category
+
+    let siteTitle2 = document.createElement("div");
+    let siteTitle = document.createElement("div");
+
+    let Description = myJson.data.description;
+    let description = document.createElement("div");
+
+    let address = myJson.data.address
+    let Address = document.createElement("div");
+
+    let Transport = myJson.data.transport;
+    let transport = document.createElement("div");
+
+    transport.classList.add("transportTxt");
+    transport.innerText = Transport;
+    document.getElementById("transportation").appendChild(transport);
+    Address.innerText = address;
+    document.getElementById("address").appendChild(Address);
+    Address.classList.add("addressTxt");
+    description.classList.add("descriptionTxt");
+    description.innerText = Description;
+    document.getElementById("description").appendChild(description);
+
+    
+    siteTitle2.innerText = `${category}  at ${mrt}`;
+    siteTitle2.classList.add("siteTitle2");
+    document.getElementById("attractionTitles").appendChild(siteTitle);
+    document.getElementById("attractionTitles").appendChild(siteTitle2);
+    siteTitle.innerText = SiteTitle;
+    siteTitle.classList.add("siteTitle");
+    for(let i = 0; i < SliderImgsLinks.length; i++) {
+        console.log(myJson)
+        let img = document.createElement("img");
+        let imgContainer = document.createElement("div");
+        let dot = document.createElement("span");
+
+        imgContainer.classList.add("mySlides");
+        imgContainer.classList.add("fade");
+        img.src = SliderImgsLinks[i];
+        img.classList.add("attractionImg");
+        imgContainer.appendChild(img);
+
+        document.getElementById("attractionPicsSliderContainer").appendChild(imgContainer);
+        document.getElementById("dotsIndicators").appendChild(dot);
+        dot.classList.add("dot");
+        dot.addEventListener("click", function() {
+            slideIndex = i + 1;
+            currentSlide(slideIndex);
+        });
+
+
+
+    }
+    showSlides(slideIndex);
+})
+
+
+
+function tourSelection(radio) {
+    if (radio.checked && radio.id === "beforeNoon") {
+        document.getElementById("priceForSelection").innerText = "新台幣 2000 元"
+    }
+    else if (radio.checked && radio.id === "afterNoon") {
+        document.getElementById("priceForSelection").innerText = "新台幣 2500 元"
+    } else return
+}
+</script>
+</html>
