@@ -2,8 +2,10 @@ from flask import *
 import json, re, mysql.connector
 from mysql.connector import pooling, Error
 import jwt, datetime
+from flask_cors import CORS
 
 app=Flask(__name__)
+CORS(app)
 app.config["JSON_AS_ASCII"]=False
 app.config["TEMPLATES_AUTO_RELOAD"]=True
 app.config["JSON_SORT_KEYS"] = False
