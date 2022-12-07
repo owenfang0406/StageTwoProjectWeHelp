@@ -1,6 +1,7 @@
 from flask import *
 import json, re, mysql.connector
 from mysql.connector import pooling, Error
+import jwt, datetime
 
 app=Flask(__name__)
 app.config["JSON_AS_ASCII"]=False
@@ -36,7 +37,7 @@ def requestCon(sql, args):
 	else:
 		cursor.execute(sql, args)
 		record = cursor.fetchall()
-		# connection_object.commit()
+		connection_object.commit()
 		cursor.close()
 		connection_object.close()
 		return record
@@ -147,6 +148,108 @@ def lookUpCateAPI():
 			return err(msg, 500)
 		else:
 			return categoriesJson
+
+@app.route("/api/user", methods=['POST'])
+def register():
+	content_type = request.headers.get('Content-Type')
+	if (content_type == 'application/json'):
+		json = request.json
+		print(json)
+		name = json["name"]
+		email = json["emailAccount"]
+		pwd = json["password"]
+		sql = """
+		select email from member where email = %s;
+		"""
+		emailArg = (email,)
+		if requestCon(sql, emailArg) != []:
+			e = "電子信箱已被使用，請嘗試別組信箱"
+			return make_response(err(e, 400))
+		else:
+			insertSQL = """
+			insert into member (name, email, pwd) values (%s,%s,%s);
+			"""
+			args = (name, email, pwd)
+			requestCon(insertSQL, args)
+			resp = dict()
+			resp["ok"] = True
+			resp = jsonify(resp)
+			resp.headers.add('Access-Control-Allow-Origin', '*')
+			return resp
+	else:
+		return 'Content-Type not supported'
+
+
+@app.route("/api/user/auth", methods=['GET', 'PUT', 'DELETE'])
+def auth():
+	secret = "B2822A1AC88C59F4A809E62C55D8B731BF6A092799BA3A591BB8F80D61A6EFE7"
+	content_type = request.headers.get('Content-Type')
+	if (content_type == 'application/json'):
+		if (request.method == 'PUT'):
+			json = request.json
+			email = json["emailAccount"]
+			pwd = json["password"]
+			authSQL = """
+			select * from member where email = %s and pwd = %s;
+			"""
+			authArgs = (email, pwd)
+			memberInfo = requestCon(authSQL, authArgs)
+			if memberInfo:
+				userInfo = dict()
+				userInfo["id"] = memberInfo[0][0]
+				userInfo["name"] = memberInfo[0][1]
+				userInfo["email"] = memberInfo[0][2]
+				encode_jwt = jwt.encode(userInfo, secret, algorithm='HS256')
+				print(encode_jwt)
+				resp = dict()
+				resp["ok"] = True
+				resp = jsonify(resp)
+				resp = make_response(resp, 200)
+				expire_date = datetime.datetime.now()
+				expire_date = expire_date + datetime.timedelta(days=7)
+				resp.set_cookie(key='token', value=encode_jwt, expires=expire_date)
+				resp.headers.add('Access-Control-Allow-Origin', '*')
+				return resp
+			else:
+				msg = "登入失敗，帳號或密碼錯誤或其他原因"
+				return err(msg, 400)
+		elif (request.method == 'GET'):
+			userToken = request.cookies.get('token')
+			if userToken:
+				print(userToken)
+				userInfo = jwt.decode(userToken,secret, algorithms='HS256')
+				resp = make_response(userInfo, 200)
+				resp.headers.add('Access-Control-Allow-Origin', '*')
+				return resp
+			else:
+				resp = dict()
+				resp['id'] = None
+				resp = make_response(resp)
+				resp.headers.add('Access-Control-Allow-Origin', '*')
+				return resp
+		elif (request.method == 'DELETE'):
+			userToken = request.cookies.get('token')
+			resp = dict()
+			resp["ok"] = True
+			resp = jsonify(resp)
+			resp = make_response(resp, 200)
+			resp.set_cookie(key='token', value=userToken, expires=0)
+			resp.headers.add('Access-Control-Allow-Origin', '*')
+			return resp			
+	else:
+		msg = "伺服器內部錯誤"
+		return err(msg, 500)
+
+# @app.route("/api/user/auth")
+# def checkUserStatus():
+# 	userToken = request.cookies.get('token')
+# 	secret = "B2822A1AC88C59F4A809E62C55D8B731BF6A092799BA3A591BB8F80D61A6EFE7"
+# 	if userToken:
+# 		userInfo = jwt.decode(userToken,secret, algorithms='HS256')
+# 		print(userInfo)
+# 		return
+# 	else:
+# 		return
 
 @app.route("/api/attractions")
 def lookUpSitesAPI():
