@@ -740,7 +740,7 @@
                 let id = jsonResp.data[i].id;
                 let PicBox = document.createElement("a");
                 PicBox.href = `/attraction/${id}`
-                PicBox.target = "_blank";
+                // PicBox.target = "_blank";
                 PicBox.classList.add("picBox");
                 picSRC = jsonResp.data[i].images[0];
                 let image = document.createElement("img");
@@ -856,7 +856,7 @@
                 // let links = document.createElement("a");
                 let image = document.createElement("img");
                 PicBoxes[i].href = `/attraction/${id}`
-                PicBoxes[i].target = "_blank";
+                // PicBoxes[i].target = "_blank";
                 image.setAttribute('src', picSRC);
                 image.classList.add("boxImgs")
                 PicBoxes[i].appendChild(image);
