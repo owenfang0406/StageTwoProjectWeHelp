@@ -53,6 +53,10 @@
             font-weight: 700;  
         }
 
+        .navEle1:hover {
+            cursor: pointer;
+        }
+
         .navEle2 {
             font-size: 16px;
             padding: 20px 0px;
@@ -162,6 +166,9 @@
             font-weight: 700;
             line-height: 24px;
             color: #666666;
+        }
+
+        .formToggle {
             padding-bottom: 15px;
         }
 
@@ -577,7 +584,7 @@
 </head>
 <body>
     <nav>
-        <div class="navEle1"><a src="http://52.74.43.7:3000/">台北一日遊</a></div>
+        <a src="http://52.74.43.7:3000/"><div class="navEle1">台北一日遊</div></a>
         <div class="navDiv1">
             <button class="navEle2">預定行程</button>
             <button id="login" class="navEle2 navSubCSS1" onclick="openloginForm()">登入/註冊</button>
@@ -593,7 +600,7 @@
             <input type="password" placeholder="輸入密碼" name="password" required>
             <button type="submit" class="btn">登入帳戶</button>
             <div id="loginmsg" class="msg"></div>
-            <a onclick="switchToRegister()">還沒有帳戶？點此註冊</a>
+            <a class="formToggle" onclick="switchToRegister()">還沒有帳戶？點此註冊</a>
         </form>
         <form method="post" id="register" action="/api/user" class="register">
             <div class="bar"></div>
@@ -604,7 +611,7 @@
             <input type="password" placeholder="輸入密碼" name="password" required>
             <button type="submit" class="btn">註冊新帳戶</button>
             <div id="registermsg" class="msg"></div>
-            <a onclick="switchToLogin()">已經有帳戶了？點此登入</a>
+            <a class="formToggle" onclick="switchToLogin()">已經有帳戶了？點此登入</a>
         </form>
     </div>
     <main>
