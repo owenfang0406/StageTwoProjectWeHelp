@@ -460,8 +460,8 @@
             <input type="email" placeholder="輸入電子郵件" name="emailAccount" required>
             <input type="password" placeholder="輸入密碼" name="password" required>
             <button type="submit" class="btn">登入帳戶</button>
-            <a onclick="switchToRegister()">還沒有帳戶？點此註冊</a>
             <div id="loginmsg" class="msg"></div>
+            <a onclick="switchToRegister()">還沒有帳戶？點此註冊</a>
         </form>
         <form method="post" id="register" action="/api/user" class="register">
             <div class="bar"></div>
@@ -471,8 +471,8 @@
             <input type="email" placeholder="輸入電子郵件" name="emailAccount" required>
             <input type="password" placeholder="輸入密碼" name="password" required>
             <button type="submit" class="btn">註冊新帳戶</button>
-            <a onclick="switchToLogin()">已經有帳戶了？點此登入</a>
             <div id="registermsg" class="msg"></div>
+            <a onclick="switchToLogin()">已經有帳戶了？點此登入</a>
         </form>
     </div>
     <div class="helloPage">
