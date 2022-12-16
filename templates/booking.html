@@ -231,7 +231,7 @@
             align-items: center;
         } */
 
-        .contactForm input[type="text"], input[type="email"] {
+        .contactForm input[type="text"], .contactForm input[type="email"] {
             border: solid #E8E8E8 1px;
             border-radius: 5px;
             width: 200px;
@@ -247,7 +247,7 @@
             color: #666666;
         }
 
-        .creditCard input[type="text"], input[type="password"] {
+        .creditCard input[type="text"], .creditCard input[type="password"] {
             border: solid #E8E8E8 1px;
             border-radius: 5px;
             width: 200px;
@@ -286,7 +286,11 @@
             justify-content: center;
             width: 27%;
             height: 200px;
-            background-color: aquamarine;
+            /* background-color: aquamarine; */
+        }
+
+        .imgContainer > img {
+            object-fit: cover;
         }
 
         .welcomeBar{
@@ -338,7 +342,7 @@
             display: flex;
             flex-wrap: wrap;
             justify-content: flex-end;
-            margin: 0px 0px 0px auto;
+            margin: 0px 100px 0px auto;
         }
 
         .total {
@@ -373,6 +377,9 @@
 
         .showNoBookingInfo {
             display: none;
+            background-color: #FFFFFF;
+            margin-top: 64px;
+            max-width: 100%;
         }
 
         footer {
@@ -395,10 +402,79 @@
             font-family: "Noto Sans TC";
             z-index: 1;
         }
+
+        @media screen and (max-width: 1000px) {
+            .BookingInfo {
+                margin-left: 30px;
+                margin-right: 30px;
+            }
+
+            .contactForm {
+                margin-left: 30px;
+                width: inherit;
+                max-width: 700px;
+                margin-right: 30px;
+            }
+
+            .creditCard {
+                margin-left: 30px;
+                width: inherit;
+                max-width: 700px;
+                margin-right: 30px;
+            }
+
+            .delete {
+                margin-right: 30px;
+            }
+            .confirmBlock {
+                margin: 0px 50px 0px auto;
+            }
+        }
+
+        @media screen and (max-width: 800px) {
+            .imgContainer {
+                width: 100%;
+            }
+            .delete {
+                top: inherit;
+                bottom: 0px;
+            }
+            .bookingDetails {
+                padding-left: inherit;
+                width: 100%;
+
+            }
+        }
+
+        @media screen and (max-width: 465px) {
+            .imgContainer {
+                width: 100%;
+            }
+            .BookingInfo {
+                margin-left: 10px;
+                margin-right: 10px;
+            }
+            .contactForm{
+                margin-left: 10px;
+                margin-right: 10px;
+            }
+            .creditCard{
+                margin-left: 10px;
+                margin-right: 10px;
+            }
+            .delete{
+                margin-right: 10px;
+            }
+            .confirmBlock {
+                margin: 0px 10px 0px auto;
+            }
+
+        }
+
 </style>
 <body>
     <nav>
-        <a href="http://52.74.43.7:3000/" class="navEle1">台北一日遊</a>
+        <a href="/" class="navEle1">台北一日遊</a>
         <div class="navDiv1">
             <button class="navEle2">預定行程</button>
             <button id="login" class="navEle2 navSubCSS1" onclick="openloginForm()">登入/註冊</button>
@@ -522,7 +598,7 @@
         }
     }
 
-    let url = "http://127.0.0.1:3000/api/booking"
+    let url = "/api/booking"
     const booking = new confirmation(url)
     data = booking.getData()
     data.then((resp)=>(resp.json()).then((data) => {
@@ -606,7 +682,7 @@
         const formData = new FormData(registerForm);
         const data = Object.fromEntries(formData);
         
-        fetch("http:///127.0.0.1:3000/api/user", {
+        fetch("/api/user", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -635,7 +711,7 @@
         const formData = new FormData(loginForm);
         const data = Object.fromEntries(formData);
 
-        fetch("http:///127.0.0.1:3000/api/user/auth", {
+        fetch("/api/user/auth", {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
@@ -662,7 +738,7 @@
     });
 
     document.getElementById("logout").addEventListener("click", () => {
-        fetch("http:///127.0.0.1:3000/api/user/auth", {
+        fetch("/api/user/auth", {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json'
@@ -671,6 +747,7 @@
         .then((res) => {
             if (res.ok) {
                 logOut()
+                window.location.href = "/"
             }
         })
     })
@@ -710,15 +787,16 @@
                 document.getElementById("userName2").innerText = userInfo.name
                 document.getElementById("login").style.display= 'none'
                 document.getElementById("logout").style.display = 'block'
+                document.querySelector("body").style.backgroundColor = "#757575"
             }
             else {
-                window.location.href = "http://52.74.43.7:3000/"
+                window.location.href = "/"
             }
         }
     )
 
     function checkIfLogIn(){
-        return fetch("http:///127.0.0.1:3000/api/user/auth",
+        return fetch("/api/user/auth",
         {
             method: 'GET',
             headers: {

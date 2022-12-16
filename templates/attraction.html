@@ -597,9 +597,9 @@
 </head>
 <body>
     <nav>
-        <a href="http://52.74.43.7:3000/" class="navEle1">台北一日遊</a>
+        <a href="/" class="navEle1">台北一日遊</a>
         <div class="navDiv1">
-            <a href="http://127.0.0.1:3000/booking" class="navEle2">預定行程</a>
+            <a href="/booking" class="navEle2">預定行程</a>
             <button id="login" class="navEle2 navSubCSS1" onclick="openloginForm()">登入/註冊</button>
             <button id="logout" class="navEle2 navSubCSS1 logout" onclick="logOut()">登出系統</button>
         </div>
@@ -707,7 +707,7 @@ class confirmation {
     }
 
 
-let url = "http://127.0.0.1:3000/api/booking"
+let url = "/api/booking"
 const booking = new confirmation(url)
 
 const options = document.getElementById("options");
@@ -742,7 +742,8 @@ options.addEventListener("submit", function(e) {
             data.attractionId = id
         }
         console.log(data)
-        booking.postForm(data)  
+        booking.postForm(data)
+        window.location.href = "/booking"  
         }
     })
 })
@@ -775,7 +776,7 @@ function showSlides(n) {
     dots[slideIndex-1].className += " active";
 }
 console.log(id)
-fetch(`http://127.0.0.1:3000/api/attraction/${id}`).then((resp) => (resp.json())).then((myJson)=>{
+fetch(`/api/attraction/${id}`).then((resp) => (resp.json())).then((myJson)=>{
     let SliderImgsLinks = myJson.data.images
     let SiteTitle = myJson.data.name
 
@@ -854,7 +855,7 @@ const registerForm = document.getElementById("register");
         const formData = new FormData(registerForm);
         const data = Object.fromEntries(formData);
         
-        fetch("http://127.0.0.1:3000/api/user", {
+        fetch("/api/user", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -883,7 +884,7 @@ const registerForm = document.getElementById("register");
         const formData = new FormData(loginForm);
         const data = Object.fromEntries(formData);
 
-        fetch("http://127.0.0.1:3000/api/user/auth", {
+        fetch("/api/user/auth", {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
@@ -910,7 +911,7 @@ const registerForm = document.getElementById("register");
     });
 
     document.getElementById("logout").addEventListener("click", () => {
-        fetch("http://127.0.0.1:3000/api/user/auth", {
+        fetch("/api/user/auth", {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json'
@@ -962,7 +963,7 @@ const registerForm = document.getElementById("register");
     )
 
     function checkIfLogIn(){
-        return fetch("http://127.0.0.1:3000/api/user/auth",
+        return fetch("/api/user/auth",
         {
             method: 'GET',
             headers: {
