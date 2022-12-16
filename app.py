@@ -216,7 +216,6 @@ def book():
 					values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
 					"""
 					args = (userEmail, userName, userID, id, time, price, site, address, image, date)
-					print(args)
 					requestCon(orderSQL, args)
 					resp = dict()
 					resp["ok"] = True
@@ -231,10 +230,10 @@ def book():
 				"""
 				args = (userEmail,)
 				order = requestCon(orderSQL, args)
-				print(order)
+				# print(order)
 				if order != []:
 					resp = handleOrderData(order)
-					print(resp.get_json())
+					# print(resp.get_json())
 					return resp.get_json()
 				else:
 					resp = dict()
@@ -252,7 +251,7 @@ def book():
 				resp["ok"] = True
 				return make_response(jsonify(resp), 200)
 			else:
-				print(3)
+				# print(3)
 				return err("請求方式不支援", 500)
 		else:
 			return err("請登入系統", 403)
@@ -278,7 +277,7 @@ def register():
 	content_type = request.headers.get('Content-Type')
 	if (content_type == 'application/json'):
 		json = request.json
-		print(json)
+		# print(json)
 		name = json["name"]
 		email = json["emailAccount"]
 		pwd = json["password"]
@@ -324,7 +323,7 @@ def auth():
 				userInfo["name"] = memberInfo[0][1]
 				userInfo["email"] = memberInfo[0][2]
 				encode_jwt = jwt.encode(userInfo, secret, algorithm='HS256')
-				print(encode_jwt)
+				# print(encode_jwt)
 				resp = dict()
 				resp["ok"] = True
 				resp = jsonify(resp)
@@ -340,7 +339,7 @@ def auth():
 		elif (request.method == 'GET'):
 			userToken = request.cookies.get('token')
 			if userToken:
-				print(userToken)
+				# print(userToken)
 				userInfo = jwt.decode(userToken,secret, algorithms='HS256')
 				resp = make_response(userInfo, 200)
 				resp.headers.add('Access-Control-Allow-Origin', '*')

@@ -602,7 +602,7 @@
     const booking = new confirmation(url)
     data = booking.getData()
     data.then((resp)=>(resp.json()).then((data) => {
-        console.log(data)
+        // console.log(data)
         initBookingInfo(data)
 
     }))
@@ -634,7 +634,6 @@
             const price = data.data.price
             const time = data.data.time
             const Address = data.data.attraction.address
-            console.log(offsetDate)
 
             img.src = imgURL
             img.classList.add("img")
@@ -701,7 +700,7 @@
             }
             return res.json()})
         .then((data) => {
-            console.log(data)
+            // console.log(data)
         })
     });
 
@@ -734,7 +733,7 @@
             }
             return res.json()})
         .then((data) => {
-            console.log(data)
+            // console.log(data)
         })
     });
 
@@ -782,7 +781,7 @@
 
     checkIfLogIn().then(
         (userInfo) => {
-            console.log(userInfo)
+            // console.log(userInfo)
             if (userInfo.id != null) {
                 document.getElementById("userName").innerText = userInfo.name
                 document.getElementById("userName2").innerText = userInfo.name

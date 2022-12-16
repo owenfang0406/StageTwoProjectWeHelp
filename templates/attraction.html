@@ -716,7 +716,7 @@ options.addEventListener("submit", function(e) {
     e.preventDefault()
     isLoggedIn = checkIfLogIn()
     isLoggedIn.then(resp => {
-        console.log(resp)
+        // console.log(resp)
         if (resp.id == null) {
             document.getElementById("bg").style.display = 'block'
             document.getElementById("loginForm").style.display = 'flex'
@@ -724,9 +724,9 @@ options.addEventListener("submit", function(e) {
         else {
             const formData = new FormData(this);
         for (const entry of formData.entries()) {
-            console.log(entry)
+            // console.log(entry)
         }
-        console.log(formData.entries())
+        // console.log(formData.entries())
         let data = Object.fromEntries(formData.entries())
         if (data.price == 2500) {
             data.time = "afternoon"
@@ -741,7 +741,7 @@ options.addEventListener("submit", function(e) {
             data.time = null
             data.attractionId = id
         }
-        console.log(data)
+        // console.log(data)
         booking.postForm(data)
         window.location.href = "/booking"  
         }
@@ -751,7 +751,7 @@ options.addEventListener("submit", function(e) {
 
 function plusSlides(n) {
     slideIndex = slideIndex + n;
-    console.log("btnpage" + slideIndex)
+    // console.log("btnpage" + slideIndex)
     showSlides(slideIndex);
 }
 
@@ -762,8 +762,8 @@ function currentSlide(n) {
 function showSlides(n) {
     let slides = document.getElementsByClassName("mySlides");
     let dots = document.getElementsByClassName("dot");
-    console.log(n)
-    console.log(slides.length)
+    // console.log(n)
+    // console.log(slides.length)
     if (n > slides.length) {slideIndex = 1}
     if (n < 1) {slideIndex = slides.length}
     for (i = 0; i < slides.length; i++) {
@@ -775,7 +775,7 @@ function showSlides(n) {
     slides[slideIndex-1].style.display = "block";  
     dots[slideIndex-1].className += " active";
 }
-console.log(id)
+// console.log(id)
 fetch(`/api/attraction/${id}`).then((resp) => (resp.json())).then((myJson)=>{
     let SliderImgsLinks = myJson.data.images
     let SiteTitle = myJson.data.name
@@ -813,7 +813,7 @@ fetch(`/api/attraction/${id}`).then((resp) => (resp.json())).then((myJson)=>{
     siteTitle.innerText = SiteTitle;
     siteTitle.classList.add("siteTitle");
     for(let i = 0; i < SliderImgsLinks.length; i++) {
-        console.log(myJson)
+        // console.log(myJson)
         let img = document.createElement("img");
         let imgContainer = document.createElement("div");
         let dot = document.createElement("span");
@@ -873,7 +873,7 @@ const registerForm = document.getElementById("register");
             }
             return res.json()})
         .then((data) => {
-            console.log(data)
+            // console.log(data)
         })
     });
 
@@ -906,7 +906,7 @@ const registerForm = document.getElementById("register");
             }
             return res.json()})
         .then((data) => {
-            console.log(data)
+            // console.log(data)
         })
     });
 
@@ -953,7 +953,7 @@ const registerForm = document.getElementById("register");
 
     checkIfLogIn().then(
         (userInfo) => {
-            console.log(userInfo)
+            // console.log(userInfo)
             if (userInfo.id != null) {
                 document.getElementById("login").style.display= 'none'
                 document.getElementById("logout").style.display = 'block'
