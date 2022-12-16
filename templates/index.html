@@ -14,6 +14,124 @@
             position: relative;
         }
 
+        .bg {
+            position: fixed;
+            top: 0px;
+            left: 0px;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(0, 0, 0, .3);
+            backdrop-filter: blur(5px);
+            z-index: 5;
+            display: none;
+        }
+
+        .logout {
+            display: none;
+        }
+
+        .loginForm, .register {
+            box-sizing: border-box;
+            position: fixed;
+            display: none;
+            justify-content: center;
+            flex-wrap: wrap;
+            top: 74px;
+            left: 0px;
+            right: 0px;
+            margin: 0px auto;
+            max-width: 340px;
+            height: auto;
+            background: #FFFFFF;
+            border-radius: 6px;
+        }
+
+        .bar {
+            position: absolute;
+            width: 100%;
+            height: 10px;
+            top: 0px;
+            right: 0px;
+            left: 0px;
+            width: 100%;
+            background-color: #448899;
+            border-top-left-radius: 6px;
+            border-top-right-radius: 6px;
+        }
+
+        .close {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            position: absolute;
+            top: 27px;
+            right: 17px;
+            /* padding: 27px 17px; */
+            transform: translate(0%, -50%);
+        }
+
+        .loginForm input[type=email], .loginForm input[type=password], 
+        .register input[type=email], .register input[type=password],
+        .register input[type=text]  {
+            width: 85%;
+            margin: 10px 0px;
+            border: 1px solid gray;
+            border-radius: 6px;
+            height: 47px;
+        }
+
+        .loginForm .btn, .register .btn {
+            width: calc(85% + 15px);
+            background-color: #448899;
+            color: white;
+            border-radius: 6px;
+            height: 47px;
+            border: none;
+            font-family: 'Noto Sans TC';
+            font-style: normal;
+            font-weight: 400;
+            font-size: 19px;
+        }
+
+        .loginForm a ,.loginForm h1, .register a, .register h1 {
+            font-family: 'Noto Sans TC';
+            font-style: normal;
+            font-weight: 700;
+            line-height: 24px;
+            color: #666666;
+        }
+
+        .loginForm h1, .register h1 {
+            font-size: 24px;
+        }
+
+        .loginForm a, .register a {
+            font-size: 16px;
+        }
+
+        .formToggle {
+            padding-bottom: 15px;
+        }
+
+        .loginForm a:hover, .register a:hover {
+            cursor: pointer;
+            color: black;
+            font-size: 20px;
+        }
+
+        .msg {
+            font-family: 'Noto Sans TC';
+            font-style: normal;
+            font-weight: 700;
+            line-height: 24px;
+            color: red;
+            width: 80%;
+            display: flex;
+            justify-content: center;
+            padding-bottom: 5px;
+            padding-top: 5px;
+        }    
+
         nav {
             max-width: 1200px;
             display: flex;
@@ -23,7 +141,7 @@
             right: 0px;
             left: 0px;
             top: 0px;
-            z-index: 3;
+            z-index: 5;
             background-color: white;
             align-items: center;
         }
@@ -51,7 +169,12 @@
             padding: 10px;
             color: #448899;
             font-family: 'Noto Sans TC';
-            font-weight: 700;  
+            font-weight: 700;
+            text-decoration: none;  
+        }
+
+        .navEle1:hover {
+            cursor: pointer;
         }
 
         .navEle2 {
@@ -281,7 +404,7 @@
                 position: sticky;
                 top: 0px;
                 padding: 0 10px;
-                z-index: 3;
+                z-index: 4;
                 background-color: white;
             }
             .helloPage {
@@ -333,12 +456,36 @@
 </head>
 <body>
     <nav>
-        <div class="navEle1">台北一日遊</div>
+        <a href="http://52.74.43.7:3000/" class="navEle1">台北一日遊</a>
         <div class="navDiv1">
             <button class="navEle2">預定行程</button>
-            <button class="navEle2 navSubCSS1">登入/註冊</button>
+            <button id="login" class="navEle2 navSubCSS1" onclick="openloginForm()">登入/註冊</button>
+            <button id="logout" class="navEle2 navSubCSS1 logout" onclick="logOut()">登出系統</button>
         </div>
     </nav>
+    <div id="bg" class="bg">
+        <form id="loginForm" class="loginForm" action="">
+            <span class="close" onclick="closeForm()"><img src={{ url_for('static', filename = 'icon_close.png') }} alt=""></span>
+            <div class="bar"></div>
+            <h1>登入會員帳號</h1>
+            <input type="email" placeholder="輸入電子郵件" name="emailAccount" required>
+            <input type="password" placeholder="輸入密碼" name="password" required>
+            <button type="submit" class="btn">登入帳戶</button>
+            <div id="loginmsg" class="msg"></div>
+            <a class="formToggle" onclick="switchToRegister()">還沒有帳戶？點此註冊</a>
+        </form>
+        <form method="post" id="register" action="/api/user" class="register">
+            <div class="bar"></div>
+            <span class="close" onclick="closeForm()"><img src={{ url_for('static', filename = 'icon_close.png') }} alt=""></span>
+            <h1>註冊會員帳號</h1>
+            <input type="text" placeholder="輸入姓名" name="name" required>
+            <input type="email" placeholder="輸入電子郵件" name="emailAccount" required>
+            <input type="password" placeholder="輸入密碼" name="password" required>
+            <button type="submit" class="btn">註冊新帳戶</button>
+            <div id="registermsg" class="msg"></div>
+            <a class="formToggle" onclick="switchToLogin()">已經有帳戶了？點此登入</a>
+        </form>
+    </div>
     <div class="helloPage">
         <img src={{ url_for('static', filename = 'welcome.png') }} alt="Taipei 101">
     </div>
@@ -372,6 +519,114 @@
 </body>
 <script>
     let pageIndex = 0;
+    const registerForm = document.getElementById("register");
+    registerForm.addEventListener("submit", () => {
+        event.preventDefault()
+        const formData = new FormData(registerForm);
+        const data = Object.fromEntries(formData);
+        
+        fetch("http:///52.74.43.7:3000/api/user", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        }).then((res) => {
+            if (res.ok) {
+                document.getElementById("registermsg").innerText = "註冊成功，請重新登入"
+            }
+            else if (res.status == 400) {
+                 document.getElementById("registermsg").innerText = "註冊失敗，重複的 Email 或其他原因" 
+            }
+            else if (res.status == 500) {
+                document.getElementById("registermsg").innerText = "伺服器內部錯誤" 
+            }
+            return res.json()})
+        .then((data) => {
+            console.log(data)
+        })
+    });
+
+    const loginForm = document.getElementById("loginForm");
+
+    loginForm.addEventListener("submit", () => {
+        event.preventDefault()
+        const formData = new FormData(loginForm);
+        const data = Object.fromEntries(formData);
+
+        fetch("http:///52.74.43.7:3000/api/user/auth", {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then((res) => {
+            if (res.ok) {
+                document.getElementById("loginmsg").innerText = "登入成功"
+                closeForm()
+                document.getElementById("login").style.display= 'none'
+                document.getElementById("logout").style.display = 'block'
+            }
+            else if (res.status == 400) {
+                 document.getElementById("loginmsg").innerText = "登入失敗" 
+            }
+            else if (res.status == 500) {
+                document.getElementById("loginmsg").innerText = "伺服器內部錯誤" 
+            }
+            return res.json()})
+        .then((data) => {
+            console.log(data)
+        })
+    });
+
+    document.getElementById("logout").addEventListener("click", () => {
+        fetch("http:///52.74.43.7:3000/api/user/auth", {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then((res) => {
+            if (res.ok) {
+                logOut()
+            }
+        })
+    })
+
+    function logOut() {
+        document.getElementById("login").style.display= 'block'
+        document.getElementById("logout").style.display = 'none'
+    }
+
+    function openloginForm() {
+        document.getElementById("bg").style.display = "block";
+        document.getElementById("loginForm").style.display = "flex";
+        
+    }
+
+    function switchToRegister() {
+        document.getElementById("loginForm").style.display = "none";
+        document.getElementById("register").style.display = "flex";
+    }
+
+    function switchToLogin() {
+        openloginForm();
+        document.getElementById("register").style.display = "none";
+    }
+
+    function closeForm() {
+        document.getElementById("loginForm").style.display = "none";
+        document.getElementById("register").style.display = "none";
+        document.getElementById("bg").style.display = "none";
+    }
+
+    // document.addEventListener("click", function (e) {
+    //     if(e.target.id !== "login") {
+    //         closeForm();
+    //     }
+    //     else return
+    // })
 
     document.getElementById("searchTxt").addEventListener("click", function() {
         toggle(document.querySelectorAll(".dropDownBox"))
@@ -411,7 +666,32 @@
             }
         }else return
     }
-     
+
+    checkIfLogIn().then(
+        (userInfo) => {
+            console.log(userInfo)
+            if (userInfo.id != null) {
+                document.getElementById("login").style.display= 'none'
+                document.getElementById("logout").style.display = 'block'
+            }
+            else return
+        }
+    )
+
+    function checkIfLogIn(){
+        return fetch("http:///52.74.43.7:3000/api/user/auth",
+        {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }
+        ).then(function(response) {
+                myJson = response.json();
+                return myJson
+            })
+        }
+
     function fetchAttractionsJSON(nextPage) {
         if (nextPage != null){
             return fetch(`http://52.74.43.7:3000/api/attractions?page=${nextPage}`)
@@ -471,7 +751,7 @@
                 let id = jsonResp.data[i].id;
                 let PicBox = document.createElement("a");
                 PicBox.href = `/attraction/${id}`
-                PicBox.target = "_blank";
+                // PicBox.target = "_blank";
                 PicBox.classList.add("picBox");
                 picSRC = jsonResp.data[i].images[0];
                 let image = document.createElement("img");
@@ -587,7 +867,7 @@
                 // let links = document.createElement("a");
                 let image = document.createElement("img");
                 PicBoxes[i].href = `/attraction/${id}`
-                PicBoxes[i].target = "_blank";
+                // PicBoxes[i].target = "_blank";
                 image.setAttribute('src', picSRC);
                 image.classList.add("boxImgs")
                 PicBoxes[i].appendChild(image);

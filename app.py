@@ -1,8 +1,11 @@
 from flask import *
 import json, re, mysql.connector
 from mysql.connector import pooling, Error
+import jwt, datetime
+from flask_cors import CORS
 
 app=Flask(__name__)
+CORS(app)
 app.config["JSON_AS_ASCII"]=False
 app.config["TEMPLATES_AUTO_RELOAD"]=True
 app.config["JSON_SORT_KEYS"] = False
@@ -36,7 +39,7 @@ def requestCon(sql, args):
 	else:
 		cursor.execute(sql, args)
 		record = cursor.fetchall()
-		# connection_object.commit()
+		connection_object.commit()
 		cursor.close()
 		connection_object.close()
 		return record
@@ -110,6 +113,19 @@ def makeAttractionsResp(list, page):
 		response.headers.add('Access-Control-Allow-Origin', '*')
 		return response
 
+def handleOrderData(list):
+	resp = dict()
+	resp["data"] = dict()
+	resp["data"]["attraction"] = dict()
+	resp["data"]["attraction"]["id"] = list[0][3]
+	resp["data"]["attraction"]["name"] = list[0][6]
+	resp["data"]["attraction"]["address"] = list[0][7]
+	resp["data"]["attraction"]["image"] = list[0][8]
+	resp["data"]["date"] = list[0][9]
+	resp["data"]["time"] = list[0][4]
+	resp["data"]["price"] = list[0][5]
+	return make_response(jsonify(resp),200)
+
 def err(e, statusCode):
 	msg = dict()
 	msg["error"] = True
@@ -134,6 +150,114 @@ def appendURLs(sites):
 		newSites.append(site)
 	return newSites
 
+def encoding(userInfo):
+	secret = "B2822A1AC88C59F4A809E62C55D8B731BF6A092799BA3A591BB8F80D61A6EFE7"
+	encode_jwt = jwt.encode(userInfo, secret, algorithm='HS256')
+	return encode_jwt
+
+def decoding(usrToken):
+	secret = "B2822A1AC88C59F4A809E62C55D8B731BF6A092799BA3A591BB8F80D61A6EFE7"
+	userInfo = jwt.decode(usrToken, secret, algorithms='HS256')
+	return userInfo
+
+@app.route("/api/booking", methods=['POST','GET','DELETE'])
+def book():
+	userToken = request.cookies.get('token')
+	print(userToken)
+	if (userToken):
+		userInfo = decoding(request.cookies.get('token'))
+		userID = userInfo["id"]
+		userName = userInfo["name"]
+		userEmail = userInfo["email"]
+		print(userInfo)
+		crossCheckedToken = encoding(userInfo)
+		print(1)
+		if crossCheckedToken == request.cookies.get('token'):
+			if request.method == 'POST':
+				print(2)
+				json = request.json
+				time = json["time"]
+				price = json["price"]
+				id = json["attractionId"]
+				date = json["date"]
+				QueryData = loopUpId(id).get_json()
+				site = QueryData["data"]["name"]
+				address = QueryData["data"]["address"]
+				image = QueryData["data"]["images"][0]
+				checkOrderSQL = """
+				select * from booking where userEmail = %s;
+				"""
+				args = (userEmail,)
+				order = requestCon(checkOrderSQL, args)
+				if order:
+					overwriteSQL = """
+					UPDATE booking SET
+					userName = %s,
+					userID = %s,
+					attractionID = %s,
+					time = %s,
+					price =%s,
+					site = %s,
+					address = %s,
+					image = %s,
+					date = %s
+					WHERE
+					userEmail = %s;
+					"""
+					args = (userName, userID, id, time, price, site, address, image, date, userEmail)
+					requestCon(overwriteSQL, args)
+					resp = dict()
+					resp["ok"] = True
+					return make_response(jsonify(resp), 200)
+
+				elif order == []: 
+					orderSQL = """
+					insert into booking (userEmail, userName, userID, attractionID, time, price, site, address, image, date) 
+					values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
+					"""
+					args = (userEmail, userName, userID, id, time, price, site, address, image, date)
+					requestCon(orderSQL, args)
+					resp = dict()
+					resp["ok"] = True
+					return make_response(jsonify(resp), 200)
+
+				else: 
+					return err("建立失敗", 400)
+			
+			elif request.method == 'GET':
+				orderSQL = """
+				select * from booking where userEmail = %s;
+				"""
+				args = (userEmail,)
+				order = requestCon(orderSQL, args)
+				# print(order)
+				if order != []:
+					resp = handleOrderData(order)
+					# print(resp.get_json())
+					return resp.get_json()
+				else:
+					resp = dict()
+					resp["data"] = None
+					return make_response(resp, 200)
+					
+				
+			elif request.method == 'DELETE':
+				deleteSQL = """
+				delete from booking where userEmail = %s;
+				"""
+				args = (userEmail,)
+				requestCon(deleteSQL, args)
+				resp = dict()
+				resp["ok"] = True
+				return make_response(jsonify(resp), 200)
+			else:
+				# print(3)
+				return err("請求方式不支援", 500)
+		else:
+			return err("請登入系統", 403)
+	else:
+		return err("請登入系統", 403)
+
 @app.route("/api/categories")
 def lookUpCateAPI():
 	if request.method == 'GET':
@@ -147,6 +271,108 @@ def lookUpCateAPI():
 			return err(msg, 500)
 		else:
 			return categoriesJson
+
+@app.route("/api/user", methods=['POST'])
+def register():
+	content_type = request.headers.get('Content-Type')
+	if (content_type == 'application/json'):
+		json = request.json
+		# print(json)
+		name = json["name"]
+		email = json["emailAccount"]
+		pwd = json["password"]
+		sql = """
+		select email from member where email = %s;
+		"""
+		emailArg = (email,)
+		if requestCon(sql, emailArg) != []:
+			e = "電子信箱已被使用，請嘗試別組信箱"
+			return make_response(err(e, 400))
+		else:
+			insertSQL = """
+			insert into member (name, email, pwd) values (%s,%s,%s);
+			"""
+			args = (name, email, pwd)
+			requestCon(insertSQL, args)
+			resp = dict()
+			resp["ok"] = True
+			resp = jsonify(resp)
+			resp.headers.add('Access-Control-Allow-Origin', '*')
+			return resp
+	else:
+		return 'Content-Type not supported'
+
+
+@app.route("/api/user/auth", methods=['GET', 'PUT', 'DELETE'])
+def auth():
+	secret = "B2822A1AC88C59F4A809E62C55D8B731BF6A092799BA3A591BB8F80D61A6EFE7"
+	content_type = request.headers.get('Content-Type')
+	if (content_type == 'application/json'):
+		if (request.method == 'PUT'):
+			json = request.json
+			email = json["emailAccount"]
+			pwd = json["password"]
+			authSQL = """
+			select * from member where email = %s and pwd = %s;
+			"""
+			authArgs = (email, pwd)
+			memberInfo = requestCon(authSQL, authArgs)
+			if memberInfo:
+				userInfo = dict()
+				userInfo["id"] = memberInfo[0][0]
+				userInfo["name"] = memberInfo[0][1]
+				userInfo["email"] = memberInfo[0][2]
+				encode_jwt = jwt.encode(userInfo, secret, algorithm='HS256')
+				# print(encode_jwt)
+				resp = dict()
+				resp["ok"] = True
+				resp = jsonify(resp)
+				resp = make_response(resp, 200)
+				expire_date = datetime.datetime.now()
+				expire_date = expire_date + datetime.timedelta(days=7)
+				resp.set_cookie(key='token', value=encode_jwt, expires=expire_date)
+				resp.headers.add('Access-Control-Allow-Origin', '*')
+				return resp
+			else:
+				msg = "登入失敗，帳號或密碼錯誤或其他原因"
+				return err(msg, 400)
+		elif (request.method == 'GET'):
+			userToken = request.cookies.get('token')
+			if userToken:
+				# print(userToken)
+				userInfo = jwt.decode(userToken,secret, algorithms='HS256')
+				resp = make_response(userInfo, 200)
+				resp.headers.add('Access-Control-Allow-Origin', '*')
+				return resp
+			else:
+				resp = dict()
+				resp['id'] = None
+				resp = make_response(resp)
+				resp.headers.add('Access-Control-Allow-Origin', '*')
+				return resp
+		elif (request.method == 'DELETE'):
+			userToken = request.cookies.get('token')
+			resp = dict()
+			resp["ok"] = True
+			resp = jsonify(resp)
+			resp = make_response(resp, 200)
+			resp.set_cookie(key='token', value=userToken, expires=0)
+			resp.headers.add('Access-Control-Allow-Origin', '*')
+			return resp			
+	else:
+		msg = "伺服器內部錯誤"
+		return err(msg, 500)
+
+# @app.route("/api/user/auth")
+# def checkUserStatus():
+# 	userToken = request.cookies.get('token')
+# 	secret = "B2822A1AC88C59F4A809E62C55D8B731BF6A092799BA3A591BB8F80D61A6EFE7"
+# 	if userToken:
+# 		userInfo = jwt.decode(userToken,secret, algorithms='HS256')
+# 		print(userInfo)
+# 		return
+# 	else:
+# 		return
 
 @app.route("/api/attractions")
 def lookUpSitesAPI():
