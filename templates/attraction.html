@@ -63,6 +63,11 @@
             padding: 20px 0px;
             color: #666666;
             font-weight: 500;
+            text-decoration: none;
+        }
+
+        .navEle2:hover {
+            cursor: pointer;
         }
 
         .navSubCSS1 {
@@ -395,7 +400,7 @@
 
         .radioBtn{
             padding-bottom: 15px;
-            display: flex;
+            /* display: flex; */
             align-items: center;
         }
 
@@ -406,6 +411,7 @@
             font-family: 'Noto Sans TC';
         }
 
+       
         .priceForSelection {
             font-size: 16px;
             font-weight: 400;
@@ -593,7 +599,7 @@
     <nav>
         <a href="http://52.74.43.7:3000/" class="navEle1">台北一日遊</a>
         <div class="navDiv1">
-            <button class="navEle2">預定行程</button>
+            <a href="http://127.0.0.1:3000/booking" class="navEle2">預定行程</a>
             <button id="login" class="navEle2 navSubCSS1" onclick="openloginForm()">登入/註冊</button>
             <button id="logout" class="navEle2 navSubCSS1 logout" onclick="logOut()">登出系統</button>
         </div>
@@ -637,23 +643,26 @@
             <div class="bookingPanel">
             <div class="bookingInfoStr1">訂購導覽行程</div>
             <div class="bookingInfoStr2">以此景點為中心的一日行程，帶您探索城市角落故事</div>
-            <div class="dateSelectorBox">
-                <label for="date" style="color:#666666; font-weight: bold;">選擇日期：</label>
-                <input type='date' value= ""/>
-            </div>
-            <div class="radioBtn">
-                <label for="price" style="color:#666666; font-weight: bold;">選擇時間：</label>
-                <input type="radio" id="beforeNoon" value="新台幣 2000 元" name="tourOption" onclick="tourSelection(this)">
-                <label for="beforeNoon" style="padding-left:5px;color:#666666; font-weight: bold;">上半天</label>
-                <input type="radio" id="afterNoon" value="新台幣 2500 元" name="tourOption" onclick="tourSelection(this)">
-                <label for="afterNoon" style="padding-left:5px;color:#666666; font-weight: bold;">下半天</label>
-            </div>
-            <div class="prices">
-                <div style="color:#666666; font-weight: bold;">導覽費用：</div>
-                <div class="priceForSelection" id="priceForSelection"></div>
-            </div>
-            <button class="bookingBtn">開始預約行程</button>
-            </div>
+            <form id="options" class="radioBtn">
+                <div class="dateSelectorBox">
+                    <label for="date" style="color:#666666; font-weight: bold;">選擇日期：</label>
+                    <input required type='date' value= "" name="date"/>
+                </div>
+                <div style="display:flex; width: 100%; padding-bottom: 15px;">
+                    <label for="price" style="color:#666666; font-weight: bold;">選擇時間：</label>
+                    <input required type="radio" id="beforeNoon" value="2000" name="price" onclick="tourSelection(this)">
+                    <label for="beforeNoon" style="padding-left:5px;color:#666666; font-weight: bold;">上半天</label>
+                    <input required type="radio" id="afterNoon" value="2500" name="price" onclick="tourSelection(this)">
+                    <label for="afterNoon" style="padding-left:5px;color:#666666; font-weight: bold;">下半天</label>
+                </div>
+                <div>
+                    <div class="prices">
+                        <div style="color:#666666; font-weight: bold;">導覽費用：</div>
+                        <div type="text" class="priceForSelection" id="priceForSelection" name="price"></div>
+                    </div>
+                    <button id="sendOptions" class="bookingBtn" type="submit">開始預約行程</button>
+                </div>
+            </form>
         </div>
     </main>
     <hr>
@@ -677,8 +686,67 @@ function getCurrentURLID(){
     let id = url.split("/");
     return id[id.length - 1]
 }
-
 const id = getCurrentURLID();
+
+
+class confirmation {
+        constructor(url) {
+            this.url = url;
+        }
+
+        postForm(data) {
+            return fetch(this.url,
+            {
+                method: "POST",
+                headers: {
+                'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+        }
+    }
+
+
+let url = "http://127.0.0.1:3000/api/booking"
+const booking = new confirmation(url)
+
+const options = document.getElementById("options");
+
+options.addEventListener("submit", function(e) {
+    e.preventDefault()
+    isLoggedIn = checkIfLogIn()
+    isLoggedIn.then(resp => {
+        console.log(resp)
+        if (resp.id == null) {
+            document.getElementById("bg").style.display = 'block'
+            document.getElementById("loginForm").style.display = 'flex'
+        }
+        else {
+            const formData = new FormData(this);
+        for (const entry of formData.entries()) {
+            console.log(entry)
+        }
+        console.log(formData.entries())
+        let data = Object.fromEntries(formData.entries())
+        if (data.price == 2500) {
+            data.time = "afternoon"
+            data.attractionId = id
+            
+        }
+        else if (data.price == 2000) {
+            data.time = "morning"
+            data.attractionId = id
+        }
+        else {
+            data.time = null
+            data.attractionId = id
+        }
+        console.log(data)
+        booking.postForm(data)  
+        }
+    })
+})
+
 
 function plusSlides(n) {
     slideIndex = slideIndex + n;
@@ -706,8 +774,8 @@ function showSlides(n) {
     slides[slideIndex-1].style.display = "block";  
     dots[slideIndex-1].className += " active";
 }
-
-fetch(`http://52.74.43.7:3000/api/attraction/${id}`).then((resp) => (resp.json())).then((myJson)=>{
+console.log(id)
+fetch(`http://127.0.0.1:3000/api/attraction/${id}`).then((resp) => (resp.json())).then((myJson)=>{
     let SliderImgsLinks = myJson.data.images
     let SiteTitle = myJson.data.name
 
@@ -767,7 +835,7 @@ fetch(`http://52.74.43.7:3000/api/attraction/${id}`).then((resp) => (resp.json()
 
     }
     showSlides(slideIndex);
-})
+}).catch((e) => {console.log(e)})
 
 
 
@@ -786,7 +854,7 @@ const registerForm = document.getElementById("register");
         const formData = new FormData(registerForm);
         const data = Object.fromEntries(formData);
         
-        fetch("http:///52.74.43.7:3000/api/user", {
+        fetch("http://127.0.0.1:3000/api/user", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -815,7 +883,7 @@ const registerForm = document.getElementById("register");
         const formData = new FormData(loginForm);
         const data = Object.fromEntries(formData);
 
-        fetch("http:///52.74.43.7:3000/api/user/auth", {
+        fetch("http://127.0.0.1:3000/api/user/auth", {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
@@ -842,7 +910,7 @@ const registerForm = document.getElementById("register");
     });
 
     document.getElementById("logout").addEventListener("click", () => {
-        fetch("http:///52.74.43.7:3000/api/user/auth", {
+        fetch("http://127.0.0.1:3000/api/user/auth", {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json'
@@ -894,7 +962,7 @@ const registerForm = document.getElementById("register");
     )
 
     function checkIfLogIn(){
-        return fetch("http:///52.74.43.7:3000/api/user/auth",
+        return fetch("http://127.0.0.1:3000/api/user/auth",
         {
             method: 'GET',
             headers: {
@@ -902,8 +970,11 @@ const registerForm = document.getElementById("register");
             }
         }
         ).then(function(response) {
-                myJson = response.json();
-                return myJson
+                if (response.status == 200) {
+                    myJson = response.json();
+                    return myJson
+                }
+                else return response.json()
             })
         }
 </script>
