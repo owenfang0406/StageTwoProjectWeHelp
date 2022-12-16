@@ -733,7 +733,7 @@
             }
             return res.json()})
         .then((data) => {
-            // console.log(data)
+            console.log(data)
         })
     });
 
@@ -781,7 +781,7 @@
 
     checkIfLogIn().then(
         (userInfo) => {
-            // console.log(userInfo)
+            console.log(userInfo)
             if (userInfo.id != null) {
                 document.getElementById("userName").innerText = userInfo.name
                 document.getElementById("userName2").innerText = userInfo.name
