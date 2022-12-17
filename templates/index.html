@@ -182,6 +182,7 @@
             padding: 20px 0px;
             color: #666666;
             font-weight: 500;
+            text-decoration: none;
         }
 
         .navSubCSS1 {
@@ -456,9 +457,9 @@
 </head>
 <body>
     <nav>
-        <a href="http://52.74.43.7:3000/" class="navEle1">台北一日遊</a>
+        <a href="/" class="navEle1">台北一日遊</a>
         <div class="navDiv1">
-            <button class="navEle2">預定行程</button>
+            <a href="/booking" class="navEle2">預定行程</a>
             <button id="login" class="navEle2 navSubCSS1" onclick="openloginForm()">登入/註冊</button>
             <button id="logout" class="navEle2 navSubCSS1 logout" onclick="logOut()">登出系統</button>
         </div>
@@ -525,7 +526,7 @@
         const formData = new FormData(registerForm);
         const data = Object.fromEntries(formData);
         
-        fetch("http:///52.74.43.7:3000/api/user", {
+        fetch("/api/user", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -554,7 +555,7 @@
         const formData = new FormData(loginForm);
         const data = Object.fromEntries(formData);
 
-        fetch("http:///52.74.43.7:3000/api/user/auth", {
+        fetch("/api/user/auth", {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json'
@@ -581,7 +582,7 @@
     });
 
     document.getElementById("logout").addEventListener("click", () => {
-        fetch("http:///52.74.43.7:3000/api/user/auth", {
+        fetch("/api/user/auth", {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json'
@@ -679,7 +680,7 @@
     )
 
     function checkIfLogIn(){
-        return fetch("http:///52.74.43.7:3000/api/user/auth",
+        return fetch("/api/user/auth",
         {
             method: 'GET',
             headers: {
@@ -694,7 +695,7 @@
 
     function fetchAttractionsJSON(nextPage) {
         if (nextPage != null){
-            return fetch(`http://52.74.43.7:3000/api/attractions?page=${nextPage}`)
+            return fetch(`/api/attractions?page=${nextPage}`)
             .then(function(response) {
                 myJson = response.json();
                 return myJson
@@ -703,7 +704,7 @@
     }
 
     function fetchCategoriesJson() {
-        return fetch("http://52.74.43.7:3000/api/categories").then((response) => {
+        return fetch("/api/categories").then((response) => {
             myJson = response.json()
             return myJson
         })
@@ -711,7 +712,7 @@
 
     function fetchAttractionJsonWithKeywords(keyword, pageIndex) {
         if (pageIndex == null || undefined) return
-        return fetch(`http://52.74.43.7:3000/api/attractions?page=${pageIndex}&keyword=${keyword}`)
+        return fetch(`api/attractions?page=${pageIndex}&keyword=${keyword}`)
         .then((response) => {
             myJson = response.json();
             pageIndex = myJson.nextPage;

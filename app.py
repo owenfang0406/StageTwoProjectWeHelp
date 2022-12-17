@@ -338,6 +338,7 @@ def auth():
 				return err(msg, 400)
 		elif (request.method == 'GET'):
 			userToken = request.cookies.get('token')
+			print(userToken)
 			if userToken:
 				# print(userToken)
 				userInfo = jwt.decode(userToken,secret, algorithms='HS256')

@@ -65,6 +65,22 @@
             padding: 20px 0px;
             color: #666666;
             font-weight: 500;
+            text-decoration: none;
+        }
+
+        .Nav2 {
+            max-width: 1200px;
+            display: flex;
+            justify-content: space-between;
+            margin: 0 auto;
+            position: inherit;
+            /* position: fixed; */
+            /* right: 0px;
+            left: 0px;
+            top: 0px; */
+            /* z-index: 4; */
+            background-color: white;
+            align-items: center;
         }
 
         .navSubCSS1 {
@@ -378,7 +394,7 @@
         .showNoBookingInfo {
             display: none;
             background-color: #FFFFFF;
-            margin-top: 64px;
+            margin-top: 0px;
             max-width: 100%;
         }
 
@@ -477,10 +493,10 @@
 
 </style>
 <body>
-    <nav>
+    <nav id="mainNav">
         <a href="/" class="navEle1">台北一日遊</a>
         <div class="navDiv1">
-            <button class="navEle2">預定行程</button>
+            <a href="/booking" class="navEle2">預定行程</a>
             <button id="login" class="navEle2 navSubCSS1" onclick="openloginForm()">登入/註冊</button>
             <button id="logout" class="navEle2 navSubCSS1 logout" onclick="logOut()">登出系統</button>
         </div>
@@ -563,6 +579,14 @@
         </div>
     </main>
     <main id="showNoBookingInfo" class="showNoBookingInfo">
+        <nav id="Nav2" class="Nav2">
+            <a href="/" class="navEle1">台北一日遊</a>
+            <div class="navDiv1">
+                <a href="/booking" class="navEle2">預定行程</a>
+                <button id="login" class="navEle2 navSubCSS1" onclick="openloginForm()">登入/註冊</button>
+                <button id="logout" class="navEle2 navSubCSS1 logout" onclick="logOut()">登出系統</button>
+            </div>
+        </nav>
         <div id="BookingInfo" class="BookingInfo">
             <div id="welcomeBar" class="welcomeBar">您好，<span id="userName2"></span>，待預訂的行程如下：</div>
             <div class="noBookingInfoBox">目前沒有任何待預訂的行程</div>
@@ -667,6 +691,7 @@
         }
         else if (data.data == null) {
             document.getElementById("showBookingInfo").style.display = 'none';
+            document.getElementById("mainNav").style.display = 'none';
             document.getElementById("showNoBookingInfo").style.display = "block"
             document.querySelector("body").style.backgroundColor = "#757575"
         }
