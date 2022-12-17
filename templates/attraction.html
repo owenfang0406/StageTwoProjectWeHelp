@@ -599,7 +599,7 @@
     <nav>
         <a href="/" class="navEle1">台北一日遊</a>
         <div class="navDiv1">
-            <a href="/booking" class="navEle2">預定行程</a>
+            <a onclick="checkOrder()" class="navEle2">預定行程</a>
             <button id="login" class="navEle2 navSubCSS1" onclick="openloginForm()">登入/註冊</button>
             <button id="logout" class="navEle2 navSubCSS1 logout" onclick="logOut()">登出系統</button>
         </div>
@@ -978,5 +978,18 @@ const registerForm = document.getElementById("register");
                 else return response.json()
             })
         }
+    
+    function checkOrder() {
+        checkIfLogIn().then(
+            (userInfo) => {
+                console.log(userInfo)
+                if (userInfo.id != null) {
+                    window.location.href = "/booking"
+                }
+                else {
+                    openloginForm()
+                }
+            })
+    }
 </script>
 </html>
