@@ -583,8 +583,8 @@
             <a href="/" class="navEle1">台北一日遊</a>
             <div class="navDiv1">
                 <a href="/booking" class="navEle2">預定行程</a>
-                <button id="login" class="navEle2 navSubCSS1" onclick="openloginForm()">登入/註冊</button>
-                <button id="logout" class="navEle2 navSubCSS1 logout" onclick="logOut()">登出系統</button>
+                <button id="login2" class="navEle2 navSubCSS1" onclick="openloginForm()">登入/註冊</button>
+                <button id="logout2" class="navEle2 navSubCSS1 logout" onclick="logOut()">登出系統</button>
             </div>
         </nav>
         <div id="BookingInfo" class="BookingInfo">
@@ -753,6 +753,8 @@
                 closeForm()
                 document.getElementById("login").style.display= 'none'
                 document.getElementById("logout").style.display = 'block'
+                document.getElementById("login2").style.display= 'none'
+                document.getElementById("logout2").style.display = 'block'
             }
             else if (res.status == 400) {
                  document.getElementById("loginmsg").innerText = "登入失敗" 
@@ -816,6 +818,8 @@
                 document.getElementById("userName2").innerText = userInfo.name
                 document.getElementById("login").style.display= 'none'
                 document.getElementById("logout").style.display = 'block'
+                document.getElementById("login2").style.display= 'none'
+                document.getElementById("logout2").style.display = 'block'
             }
             else {
                 window.location.href = "/"
