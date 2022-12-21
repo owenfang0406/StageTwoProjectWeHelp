@@ -247,7 +247,7 @@
             align-items: center;
         } */
 
-        .contactForm input[type="text"], .contactForm input[type="email"] {
+        .contactForm input[type="text"], .contactForm input[type="email"], .tpfield {
             border: solid #E8E8E8 1px;
             border-radius: 5px;
             width: 200px;
@@ -419,6 +419,14 @@
             z-index: 1;
         }
 
+        .tpfield {
+            height: 40px;
+            width: 300px;
+            border: 1px solid gray;
+            margin: 5px 0;
+            padding: 5px;
+        }
+
         @media screen and (max-width: 1000px) {
             .BookingInfo {
                 margin-left: 30px;
@@ -538,7 +546,7 @@
             </div>
         </div>
         <hr>
-        <form class="contactForm">
+        <form class="contactForm" id="contacts">
             <h4>您的聯絡資訊</h4>
             <div></div>
             <label for="fill-name">聯絡姓名:</label>
@@ -556,7 +564,26 @@
         </form>
         <hr>
         <form class="creditCard">
-            <h4>信用卡付款資訊</h4>
+            <div style="width:100%; display:flex; align-items: center;">
+                <label for="fill-cardnumber">卡片號碼： </label>
+                <div class="tpfield" id="card-number"></div>
+            </div>
+            <div style="width:100%; display:flex; align-items: center;">
+                <label for="fill-expriredate">過期時間：</label>
+                <div class="tpfield" id="card-expiration-date"></div>
+            </div>
+            <div style="width:100%; display:flex; align-items: center;">
+                <label for="fill-authCode">驗證密碼：</label>
+                <div class="tpfield" id="card-ccv"></div>
+            </div>
+
+            <!-- <label for="fill-expriredate">過期時間:</label> -->
+            <!-- <div class="tpfield" id="card-expiration-date">
+            </div> -->
+            <!-- <label for="fill-authCode">驗證密碼:</label> -->
+            <!-- <div class="tpfield" id="card-ccv">
+            </div> -->
+            <!-- <h4>信用卡付款資訊</h4>
             <div>
             <label for="fill-cardnumber">卡片號碼:</label>
             <input type="password" name="cardNum" id="cardNum" placeholder="**** **** **** ****">
@@ -567,8 +594,7 @@
             </div>
             <div>
             <label for="fill-authCode">驗證密碼:</label>
-            <input type="password" name="authCode" id="authCode" placeholder="CVV">
-            </div>
+            <input type="password" name="authCode" id="authCode" placeholder="CVV"> -->
         </form>
         <hr>
         <div class="confirmBlock">
@@ -596,19 +622,20 @@
         <div class="footerStr">COPYRIGHT © 2021 台北一日遊</div>
     </footer>
 </body>
+<script src="https://js.tappaysdk.com/sdk/tpdirect/v5.14.0"></script>
 <script>
-
-    class confirmation {
+    class Confirmation {
         constructor(url) {
+            console.log(typeof(url))
             this.url = url;
         }
 
         getData() {
-            return fetch(url)
+            return fetch(this.url)
         }
 
         postForm(data) {
-            return fetch(url,
+            return fetch(this.url,
             {
                 method: "POST",
                 headers: {
@@ -619,18 +646,167 @@
         }
 
         deleteData() {
-            return fetch(url,
+            return fetch(this.url,
             {
                 method: "DELETE"
             })
         }
     }
 
-    let url = "/api/booking"
-    const booking = new confirmation(url)
+    TPDirect.setupSDK(126860, "app_ZFhYVNHg3dczlnSMualtrT6e7y7ZMhR1t8HS40wPgh4Hdy6DLafcBhN693f9", "sandbox")
+    let fields = {
+            number: {
+                // css selector
+                element: '#card-number',
+                placeholder: '**** **** **** ****'
+            },
+            expirationDate: {
+                // DOM object
+                element: document.getElementById('card-expiration-date'),
+                placeholder: 'MM / YY'
+            },
+            ccv: {
+                element: '#card-ccv',
+                placeholder: 'ccv'
+            }
+        };
+    TPDirect.card.setup({
+    fields: fields,
+    styles: {
+        // Style all elements
+        'input': {
+            'color': 'gray'
+        },
+        // Styling ccv field
+        'input.ccv': {
+            // 'font-size': '16px'
+        },
+        // Styling expiration-date field
+        'input.expiration-date': {
+            // 'font-size': '16px'
+        },
+        // Styling card-number field
+        'input.card-number': {
+            // 'font-size': '16px'
+        },
+        // style focus state
+        ':focus': {
+            // 'color': 'black'
+        },
+        // style valid state
+        '.valid': {
+            'color': 'green'
+        },
+        // style invalid state
+        '.invalid': {
+            'color': 'red'
+        },
+        // Media queries
+        // Note that these apply to the iframe, not the root window.
+        '@media screen and (max-width: 400px)': {
+            'input': {
+                'color': 'orange'
+            }
+        }
+    },
+    // 此設定會顯示卡號輸入正確後，會顯示前六後四碼信用卡卡號
+    isMaskCreditCardNumber: true,
+    maskCreditCardNumberRange: {
+        beginIndex: 6,
+        endIndex: 11
+    }
+    })  
+
+    TPDirect.card.onUpdate(function (update) {
+        // update.canGetPrime === true
+        // --> you can call TPDirect.card.getPrime()
+        if (update.canGetPrime) {
+            // Enable submit Button to get prime.
+            // submitButton.removeAttribute('disabled')
+            document.getElementById("paybtn").removeAttribute('disabled');
+            console.log("1")
+        } else {
+            // Disable submit Button to get prime.
+            // submitButton.setAttribute('disabled', true)
+            document.getElementById("paybtn").setAttribute('disabled', true)
+        }
+    })
+    // var submitButton = document.querySelector('#submit-button')
+
+    function getPrimeInfo() {
+        // 取得 TapPay Fields 的 status
+        const tappayStatus = TPDirect.card.getTappayFieldsStatus()
+
+        // 確認是否可以 getPrime
+        if (tappayStatus.canGetPrime === false) {
+            alert('can not get prime')
+            return
+        }
+
+        // Get prime
+
+        TPDirect.card.getPrime((result) => {
+        if (result.status !== 0) {
+            alert('get prime error ' + result.msg)
+            return
+        }
+        alert('get prime 成功，prime: ' + result.card.prime)
+        passPrime(result.card.prime)
+        performPayData(bookingOrderDetails)
+        // send prime to your server, to pay with Pay by Prime API .
+        // Pay By Prime Docs: https://docs.tappaysdk.com/tutorial/zh/back.html#pay-by-prime-api
+        })
+        
+    }
+
+    function passPrime(PrimeStr) {
+        bookingOrderDetails.prime = PrimeStr;
+    }
+
+    
+    function performPayData(data) {
+        fetch("api/orders",
+            {
+                method: "POST",
+                headers: {
+                'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+        .then((resp) => {
+            if (resp.status == 200) {
+                alert("訂購成功")
+            }
+            else {
+                alert("付款失敗")
+            }
+        })
+        .catch((err) => {console.log(err)})
+    }
+
+    const paybtn = document.getElementById("paybtn")
+
+    paybtn.addEventListener("click", function(e) {
+        event.preventDefault()
+        const contactData = new FormData(contacts);
+        const data = Object.fromEntries(contactData);
+        bookingOrderDetails.order.trip.contact = data
+        getPrimeInfo()
+        console.log(bookingOrderDetails)
+    })
+
+    let bookingOrderDetails = {}
+    bookingOrderDetails.order = {}
+    bookingOrderDetails.order.trip = {}
+
+    // let url = "/api/booking"
+    const booking = new Confirmation("/api/booking")
     data = booking.getData()
     data.then((resp)=>(resp.json()).then((data) => {
-        // console.log(data)
+        console.log(data)
+        bookingOrderDetails.order.trip.attraction = data.data.attraction
+        bookingOrderDetails.order.trip.time = data.data.time
+        console.log(bookingOrderDetails)
         initBookingInfo(data)
 
     }))
@@ -669,15 +845,18 @@
 
             site.innerText = data.data.attraction.name
             date.innerText = offsetDate
+            bookingOrderDetails.order.trip.date = offsetDate
             address.innerText = Address
             if (price == 2000) {
                 document.getElementById("detailPrice").innerText = "新台幣 2000 元"
                 document.getElementById("totalAmount").innerText = "新台幣 2000 元"
+                bookingOrderDetails.order.price = 2000;
 
             }
             else if (price == 2500) {
                 document.getElementById("detailPrice").innerText = "新台幣 2500 元"
                 document.getElementById("totalAmount").innerText = "新台幣 2500 元"
+                bookingOrderDetails.order.price = 2500;
             }
 
             if (time == "morning") {

@@ -3,6 +3,8 @@ import json, re, mysql.connector
 from mysql.connector import pooling, Error
 import jwt, datetime
 from flask_cors import CORS
+import requests
+import uuid
 
 app=Flask(__name__)
 CORS(app)
@@ -374,6 +376,58 @@ def auth():
 # 		return
 # 	else:
 # 		return
+
+@app.route("/api/orders", methods=['GET', 'POST'])
+def ordersHandler():
+	data = dict()
+	data["cardholder"] = dict()
+	if request.method == 'POST':
+		order = request.json
+		data["prime"] = order["prime"]
+		data["partner_key"] = "partner_IFz9mEpscF0mhV9nXpnSiALckVxIMs91KtxjfQt33LEDs5VsdCmCo8io"
+		data["merchant_id"] = "ken5475ht_ESUN"
+		data["details"] = "TapPay Test"
+		data["amount"] = order["order"]["price"]
+		data["cardholder"]["phone_number"] = order["order"]["trip"]["contact"]["phone"]
+		data["cardholder"]["name"] = order["order"]["trip"]["contact"]["name"]
+		data["cardholder"]["email"] = order["order"]["trip"]["contact"]["email"]
+		orderid = str(uuid.uuid4())
+		RecordOrderSQl = """
+		insert into orderDetails (orderid, prime, price, siteid, name, address, image, date, time, username, email, phone, orderStatus) 
+		values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
+		"""
+		args = (orderid, order["prime"], order["order"]["price"], order["order"]["trip"]["attraction"]["id"],
+		order["order"]["trip"]["attraction"]["name"], order["order"]["trip"]["attraction"]["address"],
+		order["order"]["trip"]["attraction"]["image"], order["order"]["trip"]["date"], order["order"]["trip"]["time"],
+		order["order"]["trip"]["contact"]["name"], order["order"]["trip"]["contact"]["email"], order["order"]["trip"]["contact"]["phone"],
+		"未付款")
+		requestCon(RecordOrderSQl, args)
+
+		RecordPaymentSQL = """
+		insert into paymentDetails (orderid) values (%s);
+		"""
+		PaymentArgs = (orderid,)
+		requestCon(RecordPaymentSQL, PaymentArgs)
+		headers = {'Content-Type': 'application/json',
+					'x-api-key': 'partner_IFz9mEpscF0mhV9nXpnSiALckVxIMs91KtxjfQt33LEDs5VsdCmCo8io'}
+		response = requests.post('https://sandbox.tappaysdk.com/tpc/payment/pay-by-prime', json=data, headers=headers)
+		if response.status_code == 200:
+			response = response.json()
+			# print((response.json()))
+			print(response["transaction_time_millis"])
+			UpdatePayStatusSQl = """
+			update orderDetails set orderStatus = %s where orderid = %s;
+			"""
+			args = ("已付款", orderid)
+
+			UpdatePaymentDetailsSQl = """
+			update paymentDetails set 
+			"""
+			requestCon(UpdatePayStatusSQl, args)
+			return 'Post successful'
+		else:
+			return 'Error: {}'.format(response.status_code)
+	return make_response(order, 200)
 
 @app.route("/api/attractions")
 def lookUpSitesAPI():
