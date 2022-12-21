@@ -379,55 +379,97 @@ def auth():
 
 @app.route("/api/orders", methods=['GET', 'POST'])
 def ordersHandler():
-	data = dict()
-	data["cardholder"] = dict()
-	if request.method == 'POST':
-		order = request.json
-		data["prime"] = order["prime"]
-		data["partner_key"] = "partner_IFz9mEpscF0mhV9nXpnSiALckVxIMs91KtxjfQt33LEDs5VsdCmCo8io"
-		data["merchant_id"] = "ken5475ht_ESUN"
-		data["details"] = "TapPay Test"
-		data["amount"] = order["order"]["price"]
-		data["cardholder"]["phone_number"] = order["order"]["trip"]["contact"]["phone"]
-		data["cardholder"]["name"] = order["order"]["trip"]["contact"]["name"]
-		data["cardholder"]["email"] = order["order"]["trip"]["contact"]["email"]
-		orderid = str(uuid.uuid4())
-		RecordOrderSQl = """
-		insert into orderDetails (orderid, prime, price, siteid, name, address, image, date, time, username, email, phone, orderStatus) 
-		values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
-		"""
-		args = (orderid, order["prime"], order["order"]["price"], order["order"]["trip"]["attraction"]["id"],
-		order["order"]["trip"]["attraction"]["name"], order["order"]["trip"]["attraction"]["address"],
-		order["order"]["trip"]["attraction"]["image"], order["order"]["trip"]["date"], order["order"]["trip"]["time"],
-		order["order"]["trip"]["contact"]["name"], order["order"]["trip"]["contact"]["email"], order["order"]["trip"]["contact"]["phone"],
-		"未付款")
-		requestCon(RecordOrderSQl, args)
-
-		RecordPaymentSQL = """
-		insert into paymentDetails (orderid) values (%s);
-		"""
-		PaymentArgs = (orderid,)
-		requestCon(RecordPaymentSQL, PaymentArgs)
-		headers = {'Content-Type': 'application/json',
-					'x-api-key': 'partner_IFz9mEpscF0mhV9nXpnSiALckVxIMs91KtxjfQt33LEDs5VsdCmCo8io'}
-		response = requests.post('https://sandbox.tappaysdk.com/tpc/payment/pay-by-prime', json=data, headers=headers)
-		if response.status_code == 200:
-			response = response.json()
-			# print((response.json()))
-			print(response["transaction_time_millis"])
-			UpdatePayStatusSQl = """
-			update orderDetails set orderStatus = %s where orderid = %s;
+	userToken = request.cookies.get('token')
+	if (userToken):
+		data = dict()
+		data["cardholder"] = dict()
+		if request.method == 'POST':
+			order = request.json
+			data["prime"] = order["prime"]
+			data["partner_key"] = "partner_IFz9mEpscF0mhV9nXpnSiALckVxIMs91KtxjfQt33LEDs5VsdCmCo8io"
+			data["merchant_id"] = "ken5475ht_ESUN"
+			data["details"] = "TapPay Test"
+			data["amount"] = order["order"]["price"]
+			data["cardholder"]["phone_number"] = order["order"]["trip"]["contact"]["phone"]
+			data["cardholder"]["name"] = order["order"]["trip"]["contact"]["name"]
+			data["cardholder"]["email"] = order["order"]["trip"]["contact"]["email"]
+			orderid = str(uuid.uuid4())
+			RecordOrderSQl = """
+			insert into orderDetails (orderid, prime, price, siteid, name, address, image, date, time, username, email, phone, orderStatus) 
+			values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
 			"""
-			args = ("已付款", orderid)
+			args = (orderid, order["prime"], order["order"]["price"], order["order"]["trip"]["attraction"]["id"],
+			order["order"]["trip"]["attraction"]["name"], order["order"]["trip"]["attraction"]["address"],
+			order["order"]["trip"]["attraction"]["image"], order["order"]["trip"]["date"], order["order"]["trip"]["time"],
+			order["order"]["trip"]["contact"]["name"], order["order"]["trip"]["contact"]["email"], order["order"]["trip"]["contact"]["phone"],
+			"未付款")
+			requestCon(RecordOrderSQl, args)
 
-			UpdatePaymentDetailsSQl = """
-			update paymentDetails set 
+			RecordPaymentSQL = """
+			insert into paymentDetails (orderid) values (%s);
 			"""
-			requestCon(UpdatePayStatusSQl, args)
-			return 'Post successful'
-		else:
-			return 'Error: {}'.format(response.status_code)
-	return make_response(order, 200)
+			PaymentArgs = (orderid,)
+			requestCon(RecordPaymentSQL, PaymentArgs)
+			headers = {'Content-Type': 'application/json',
+						'x-api-key': 'partner_IFz9mEpscF0mhV9nXpnSiALckVxIMs91KtxjfQt33LEDs5VsdCmCo8io'}
+			response = requests.post('https://sandbox.tappaysdk.com/tpc/payment/pay-by-prime', json=data, headers=headers)
+			if (response.json()["status"] == 0):
+				frontEndResp = dict()
+				frontEndResp["data"] =dict()
+				frontEndResp["data"]["payment"] = dict()
+				response = response.json()
+				print(response)
+				UpdatePayStatusSQl = """
+				update orderDetails set orderStatus = %s where orderid = %s;
+				"""
+				args = ("已付款", orderid)
+				requestCon(UpdatePayStatusSQl, args)
+
+				UpdatePaymentDetailsSQl = """
+				update paymentDetails set 
+				status = %s, 
+				msg = %s, 
+				amount = %s, 
+				acquirer = %s, 
+				currency = %s, 
+				rec_trade_id = %s, 
+				bank_transaction_id = %s, 
+				auth_code = %s, 
+				type = %s, 
+				last_four = %s, 
+				bin_code = %s, 
+				transaction_time_millis = %s, 
+				start_time_millis = %s, 
+				end_time_millis = %s, 
+				card_identifier = %s, 
+				merchant_id = %s
+				where orderid = %s;
+				"""
+				updatesArgs = (response["status"], response["msg"], response["amount"], 
+				response["acquirer"], response["currency"],
+				response["rec_trade_id"], response["bank_transaction_id"], 
+				response["auth_code"], response["card_info"]["type"], response["card_info"]["last_four"], 
+				response["card_info"]["bin_code"],
+				response["transaction_time_millis"], response["bank_transaction_time"]["start_time_millis"],
+				response["bank_transaction_time"]["end_time_millis"], response["card_identifier"], 
+				response["merchant_id"], orderid)
+				
+				requestCon(UpdatePaymentDetailsSQl, updatesArgs)
+				frontEndResp["data"]["number"] = orderid
+				frontEndResp["data"]["payment"]["status"] = response["status"]
+				frontEndResp["data"]["payment"]["message"] = "付款成功"
+
+				return make_response(jsonify(frontEndResp), 200)
+			elif (response.json()["status"] != 0):
+				msg = "付款失敗"
+				return err(msg, 400)
+			else:
+				msg = "伺服器錯誤"
+				return err(msg, 500)
+		return make_response(order, 200)
+	else:
+		msg = "未登入系統"
+		return err(msg, 403)
 
 @app.route("/api/attractions")
 def lookUpSitesAPI():
