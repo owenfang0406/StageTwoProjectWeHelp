@@ -427,6 +427,33 @@
             padding: 5px;
         }
 
+        .loader {
+            position: absolute;
+            top: 40vh;
+            left: 50vw;
+            border: 16px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 16px solid #666666;
+            border-right: 16px solid gold;
+            border-bottom: 16px solid #448899;
+            border-left: 16px solid blue;
+            width: 120px;
+            height: 120px;
+            -webkit-animation: spin 2s linear infinite;
+            animation: spin 2s linear infinite;
+            display: none;
+        }
+
+        @-webkit-keyframes spin {
+        0% { -webkit-transform: rotate(0deg); }
+        100% { -webkit-transform: rotate(360deg); }
+        }
+
+        @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+        }
+
         @media screen and (max-width: 1000px) {
             .BookingInfo {
                 margin-left: 30px;
@@ -510,6 +537,7 @@
         </div>
     </nav>
     <div id="bg" class="bg">
+        <div id="loader" class="loader"></div>
         <form id="loginForm" class="loginForm" action="">
             <span class="close" onclick="closeForm()"><img src= {{ url_for('static', filename = 'icon_close.png') }} alt=""></span>
             <div class="bar"></div>
@@ -724,7 +752,6 @@
             // Enable submit Button to get prime.
             // submitButton.removeAttribute('disabled')
             document.getElementById("paybtn").removeAttribute('disabled');
-            console.log("1")
         } else {
             // Disable submit Button to get prime.
             // submitButton.setAttribute('disabled', true)
@@ -776,10 +803,21 @@
         .then((resp) => {
             if (resp.status == 200) {
                 alert("訂購成功")
+                return resp.json()
             }
             else {
                 alert("付款失敗")
+                return resp.json()
             }
+        }).then((json) => {
+            if (json.error) {
+                return json
+            }
+            orderid = json.data.number
+            hideLoader()
+            document.body.style.pointerEvents = "auto"
+            console.log(orderid)
+            window.location.href = `/thankyou?number=${orderid}`
         })
         .catch((err) => {console.log(err)})
     }
@@ -788,6 +826,8 @@
 
     paybtn.addEventListener("click", function(e) {
         event.preventDefault()
+        showLoader()
+        document.body.style.pointerEvents = "none"
         const contactData = new FormData(contacts);
         const data = Object.fromEntries(contactData);
         bookingOrderDetails.order.trip.contact = data
@@ -874,6 +914,16 @@
             document.getElementById("showNoBookingInfo").style.display = "block"
             document.querySelector("body").style.backgroundColor = "#757575"
         }
+    }
+
+    function showLoader() {
+        document.getElementById("bg").style.display = 'block'
+        document.getElementById("loader").style.display = 'block'
+    }
+
+    function hideLoader() {
+        document.getElementById("bg").style.display = 'none'
+        document.getElementById("loader").style.display = 'none'
     }
 
     function dateOffset(date) {

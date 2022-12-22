@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style> 
+    body {
+        padding: 0px;
+        margin: 0px;
+        box-sizing: border-box;
+        position: relative;
+    }
+
+    .BookingInfo {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        padding: 10px;
+        border-radius: 15px;
+        margin: 0 auto;
+        max-width: 1200px;
+        background-color: rgba(68, 136, 153,0.8);
+        color: white;
+    }
+
+    .BookingInfo div {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        line-height: 24px;
+    }
+
+    .uuid {
+        background-color: grey;
+        padding: 0px 10px;
+        border-radius: 5px;
+    }
+    
+    .copybtn {
+        width: 24px;
+        height: 24px;
+        object-fit: cover;
+        display: flex;
+        align-items: center;
+    }
+
+    .copybtn img {
+        width: 100%;
+        height: 100%;
+    }
+
+    .paybtncontainer:hover {
+        cursor: pointer;
+    }
+
+</style>
+<body>
+<div id="BookingInfo" class="BookingInfo">
+    <div><span style="color: red;">付款成功</span>，感謝您訂購台北一日遊行程</div>
+    <div>您得訂單編號為 <span id="uuid" class="uuid"></span>
+        <span class="paybtncontainer" id="paybtncontainer" title="CopyUUID" onclick="copyUUID()"><img id="copybtn" class ="copybtn" src= {{ url_for('static', filename = 'copy_icon.png') }} alt="Copy UUID"></span>
+    </div>
+
+</div>
+</body>
+<script>
+
+
+function copyUUID() {
+    var r = document.createRange();
+    r.selectNode(document.getElementById("uuid"));
+    window.getSelection().removeAllRanges();
+    window.getSelection().addRange(r);
+    document.execCommand('copy');
+    window.getSelection().removeAllRanges();
+}
+
+function GetPaidOrder(orderid) {
+    return fetch(`/api/orders${orderid}`)
+}
+orderid = getorderid()
+orderUUID = orderid.substring( 8, orderid.length)
+document.getElementById("uuid").innerText = orderUUID
+function getorderid() {
+    let orderid = window.location.search;
+    return orderid
+}
+
+GetPaidOrder(orderid).then((resp) => {
+    return resp.json()
+}).then((data) => {
+    console.log(data)
+}).catch((err) => { console.log(err) })
+</script>
+</html>

@@ -5,6 +5,8 @@ import jwt, datetime
 from flask_cors import CORS
 import requests
 import uuid
+import pytz
+from datetime import datetime
 
 app=Flask(__name__)
 CORS(app)
@@ -45,6 +47,19 @@ def requestCon(sql, args):
 		cursor.close()
 		connection_object.close()
 		return record
+
+def isUser(UserToken): 
+	userInfo = decoding(UserToken)
+	userEmail = userInfo["email"]
+	checkDBSQL = """
+	select * from member where email = %s
+	"""
+	args = (userEmail,)
+	checkIfMember = requestCon(checkDBSQL, args)
+	if checkIfMember:
+		return True
+	else:
+		return False
 
 def makeCategoriesRes(list):
 	dataDict = dict()
@@ -380,7 +395,7 @@ def auth():
 @app.route("/api/orders", methods=['GET', 'POST'])
 def ordersHandler():
 	userToken = request.cookies.get('token')
-	if (userToken):
+	if (isUser(userToken)):
 		data = dict()
 		data["cardholder"] = dict()
 		if request.method == 'POST':
@@ -466,7 +481,41 @@ def ordersHandler():
 			else:
 				msg = "伺服器錯誤"
 				return err(msg, 500)
-		return make_response(order, 200)
+		elif request.method == 'GET':
+			orderid = request.args.get('number')
+			searchOrderSQL = """
+			select * from orderDetails where orderid = %s
+			"""
+			args = (orderid,)
+			result = requestCon(searchOrderSQL, args)
+			if result != []:
+				resp = dict()
+				resp["data"] = dict()
+				resp["data"]["trip"] = dict()
+				resp["data"]["trip"]["attraction"] = dict()
+				resp["data"]["contact"] = dict()
+				dateTime = result[0][13]
+				date = datetime.strptime(str(dateTime), '%Y-%m-%d %H:%M:%S')
+				local_tz = pytz.timezone('Asia/Taipei')
+				local_date = date.astimezone(local_tz)
+				formatted_date = local_date.strftime('%Y-%m-%d')
+				resp["data"]["number"] = result[0][0]
+				resp["data"]["price"] = result[0][2]
+				resp["data"]["trip"]["attraction"]["id"] = result[0][3]
+				resp["data"]["trip"]["attraction"]["name"] = result[0][4]
+				resp["data"]["trip"]["attraction"]["address"] = result[0][5]
+				resp["data"]["trip"]["attraction"]["image"] = result[0][6]
+				resp["data"]["trip"]["date"] = formatted_date
+				resp["data"]["trip"]["time"] = result[0][8]
+				resp["data"]["contact"]["name"] = result[0][9]
+				resp["data"]["contact"]["email"] = result[0][10]
+				resp["data"]["contact"]["phone"] = result[0][11]
+				resp["data"]["status"] = 1
+				return make_response(jsonify(resp), 200, {'Content-Type': 'application/json'})
+			else:
+				msg = "請登入系統再查詢"
+				return err(msg, 403)
+			return orderid
 	else:
 		msg = "未登入系統"
 		return err(msg, 403)
