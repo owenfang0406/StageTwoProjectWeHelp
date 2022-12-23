@@ -6,7 +6,8 @@ from flask_cors import CORS
 import requests
 import uuid
 import pytz
-from datetime import datetime
+import datetime
+
 
 app=Flask(__name__)
 CORS(app)

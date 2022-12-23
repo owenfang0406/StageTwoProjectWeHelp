@@ -817,6 +817,7 @@
             hideLoader()
             document.body.style.pointerEvents = "auto"
             console.log(orderid)
+            booking.deleteData()
             window.location.href = `/thankyou?number=${orderid}`
         })
         .catch((err) => {console.log(err)})
@@ -843,13 +844,16 @@
     const booking = new Confirmation("/api/booking")
     data = booking.getData()
     data.then((resp)=>(resp.json()).then((data) => {
-        console.log(data)
+        if (data.data == null) {
+            initBookingInfo(data)
+            return
+        }
+        console.log(data.data)
         bookingOrderDetails.order.trip.attraction = data.data.attraction
         bookingOrderDetails.order.trip.time = data.data.time
         console.log(bookingOrderDetails)
-        initBookingInfo(data)
-
-    }))
+        initBookingInfo(data)}
+    ))
 
     function deleteData() {
         booking.deleteData()
