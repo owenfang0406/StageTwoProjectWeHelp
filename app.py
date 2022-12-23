@@ -483,6 +483,7 @@ def ordersHandler():
 				msg = "伺服器錯誤"
 				return err(msg, 500)
 		elif request.method == 'GET':
+			print(1111)
 			orderid = request.args.get('number')
 			searchOrderSQL = """
 			select * from orderDetails where orderid = %s
@@ -496,7 +497,7 @@ def ordersHandler():
 				resp["data"]["trip"]["attraction"] = dict()
 				resp["data"]["contact"] = dict()
 				dateTime = result[0][13]
-				date = datetime.strptime(str(dateTime), '%Y-%m-%d %H:%M:%S')
+				date = datetime.datetime.strptime(str(dateTime), '%Y-%m-%d %H:%M:%S')
 				local_tz = pytz.timezone('Asia/Taipei')
 				local_date = date.astimezone(local_tz)
 				formatted_date = local_date.strftime('%Y-%m-%d')
