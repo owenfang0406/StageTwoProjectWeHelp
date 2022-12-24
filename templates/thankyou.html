@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>感謝您的訂購</title>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function() {
+            // https://dashboard.emailjs.com/admin/account
+            emailjs.init('R68SNgEGSgZt4oQE5');
+        })();
+    </script>
+    <script type="text/javascript">
+        function sendMail() {
+        let params = {
+            from_name: document.getElementById("user").value,
+            order_uuid: document.getElementById("uuid").innerText,
+            date: document.getElementById("date").value,
+            site: document.getElementById("site").value,
+            to_whom: document.getElementById("email").value
+        }
+            emailjs.send("service_g1tfsrz","template_zqxtp39",params)
+            .then((resp) => {
+            console.log(resp)
+            console.log(params)
+            });
+
+        }
+
+    </script>
+</head>
+<style> 
+    @import url(https://fonts.googleapis.com/css2?family=Noto+Sans+TC&display=swap);
+    body {
+        padding: 0px;
+        margin: 0px;
+        box-sizing: border-box;
+        position: relative;
+        background-color: #757575;
+    }
+
+    nav {
+            max-width: 1200px;
+            display: flex;
+            justify-content: space-between;
+            margin: 0 auto;
+            position: fixed;
+            right: 0px;
+            left: 0px;
+            top: 0px;
+            z-index: 4;
+            background-color: white;
+            align-items: center;
+    }
+
+    .navDiv1 {
+        display: flex;
+        height: 64px;
+        padding-right: 10px;
+    }
+
+    .navDiv1 > button {
+        background-color: white;
+        border: none;
+        height: 30px;
+    }
+
+    .navDiv1 > button:hover {
+        cursor: pointer;
+        /* background-color: #757575; */
+        color: darkgray;
+    }
+
+    .navEle1 {
+        font-size: 30px;
+        padding: 10px;
+        color: #448899;
+        font-family: 'Noto Sans TC';
+        font-weight: 700;  
+        text-decoration: none;
+    }
+
+    .navEle1:hover {
+        cursor: pointer;
+    }
+
+    .navEle2 {
+        font-size: 16px;
+        padding: 20px 0px;
+        color: #666666;
+        font-weight: 500;
+        text-decoration: none;
+    }
+
+    .Nav2 {
+        max-width: 1200px;
+        display: flex;
+        justify-content: space-between;
+        margin: 0 auto;
+        position: inherit;
+        /* position: fixed; */
+        /* right: 0px;
+        left: 0px;
+        top: 0px; */
+        /* z-index: 4; */
+        background-color: white;
+        align-items: center;
+    }
+
+    .navSubCSS1 {
+        margin-left: 10px;
+    }
+
+    .bg {
+        position: fixed;
+        top: 0px;
+        left: 0px;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, .3);
+        backdrop-filter: blur(5px);
+        z-index: 5;
+        display: none;
+    }
+
+    .logout {
+        display: none;
+    }
+
+    .loginForm, .register {
+        box-sizing: border-box;
+        position: fixed;
+        display: none;
+        justify-content: center;
+        flex-wrap: wrap;
+        top: 74px;
+        left: 0px;
+        right: 0px;
+        margin: 0px auto;
+        max-width: 340px;
+        height: auto;
+        background: #FFFFFF;
+        border-radius: 6px;
+    }
+
+    .bar {
+        position: absolute;
+        width: 100%;
+        height: 10px;
+        top: 0px;
+        right: 0px;
+        left: 0px;
+        width: 100%;
+        background-color: #448899;
+        border-top-left-radius: 6px;
+        border-top-right-radius: 6px;
+    }
+
+    .close {
+        width: 16px;
+        height: 16px;
+        cursor: pointer;
+        position: absolute;
+        top: 27px;
+        right: 17px;
+        /* padding: 27px 17px; */
+        transform: translate(0%, -50%);
+    }
+
+    .loginForm input, .register input {
+        padding: 0px;
+        height: 40px;
+        width: 400px;
+        border-width: 0px;
+        font-size: 16px;
+        padding-left: 15px;
+        border-top-left-radius: 5px;
+        border-bottom-left-radius: 5px;
+        font-weight: bold;
+        /* position: relative; */
+    }
+
+    .loginForm input[type=email], .loginForm input[type=password], 
+    .register input[type=email], .register input[type=password],
+    .register input[type=text]  {
+        width: 85%;
+        margin: 10px 0px;
+        border: 1px solid gray;
+        border-radius: 6px;
+        height: 47px;
+    }
+
+    .loginForm .btn, .register .btn {
+        width: calc(85% + 15px);
+        background-color: #448899;
+        color: white;
+        border-radius: 6px;
+        height: 47px;
+        border: none;
+        font-family: 'Noto Sans TC';
+        font-style: normal;
+        font-weight: 400;
+        font-size: 19px;
+    }
+
+    .loginForm a ,.loginForm h1, .register a, .register h1, .welcomeBar {
+        font-family: 'Noto Sans TC';
+        font-style: normal;
+        font-weight: 700;
+        line-height: 24px;
+        color: #666666;
+    }
+
+    .formToggle {
+        padding-bottom: 15px;
+    }
+
+    .loginForm h1, .register h1 {
+        font-size: 24px;
+    }
+
+    .loginForm a, .register a {
+        font-size: 16px;
+    }
+
+    .loginForm a:hover, .register a:hover {
+        cursor: pointer;
+        color: black;
+        font-size: 20px;
+    }
+
+    .msg {
+        font-family: 'Noto Sans TC';
+        font-style: normal;
+        font-weight: 700;
+        line-height: 24px;
+        color: red;
+        width: 80%;
+        display: flex;
+        justify-content: center;
+        padding-bottom: 5px;
+        padding-top: 5px;
+    }
+
+    footer {
+        justify-content: center;
+        align-items: center;
+        display: flex;
+        max-width: 1920px;
+        height: 104px;
+        margin: 0 auto;
+        background-color: #757575;
+        z-index: 0;
+    }
+
+    .footerStr {
+        height: fit-content;
+        width: fit-content;
+        color: white;
+        font-size: 16px;
+        font-weight: 700;
+        font-family: "Noto Sans TC";
+        z-index: 1;
+    }
+
+    .showNoBookingInfo {
+            display: none;
+            background-color: #FFFFFF;
+            margin-top: 0px;
+            max-width: 100%;
+    }
+
+    .noBookingInfoBox {
+            font-size: 16px;
+            font-family: 'Noto Sans TC';
+            font-weight: 500;
+            color: #666666;
+    }
+
+    .BookingInfo {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        padding: 10px;
+        border-radius: 15px;
+        margin: 0px auto 0px auto;
+        max-width: 1180px;
+        background-color: rgba(68, 136, 153,0.8);
+        color: white;
+        text-align: center;
+    }
+
+    .BookingInfo div {
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        line-height: 24px;
+        padding: 10px;
+    }
+
+    .uuid {
+        background-color: grey;
+        padding: 0px 10px;
+        border-radius: 5px;
+    }
+    
+    .copybtn {
+        width: 24px;
+        height: 24px;
+        object-fit: cover;
+        display: flex;
+        align-items: center;
+    }
+
+    .copybtn img {
+        width: 100%;
+        height: 100%;
+    }
+
+    .paybtncontainer:hover {
+        cursor: pointer;
+    }
+
+    .Sendbtn {
+        width: 50px;
+        height: 25px;
+        background-color: darkgoldenrod;
+        color: white;
+        font-weight: 500;
+        font-family: 'Noto Sans TC';
+        border: none;
+    }
+
+    .emailInput {
+        margin: 10px 0px;
+        border: 1px solid gray;
+        border-radius: 6px;
+        height: 24px;
+        margin-left: 10px;
+    }
+
+    .sendingForm {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+    }
+</style>
+<body>
+    <nav id="mainNav">
+        <a href="/" class="navEle1">台北一日遊</a>
+        <div class="navDiv1">
+            <a href="/booking" class="navEle2">預定行程</a>
+            <button id="login" class="navEle2 navSubCSS1" onclick="openloginForm()">登入/註冊</button>
+            <button id="logout" class="navEle2 navSubCSS1 logout" onclick="logOut()">登出系統</button>
+        </div>
+    </nav>
+    <div id="bg" class="bg">
+        <div id="loader" class="loader"></div>
+        <form id="loginForm" class="loginForm" action="">
+            <span class="close" onclick="closeForm()"><img src= {{ url_for('static', filename = 'icon_close.png') }} alt=""></span>
+            <div class="bar"></div>
+            <h1>登入會員帳號</h1>
+            <input type="email" placeholder="輸入電子郵件" name="emailAccount" required>
+            <input type="password" placeholder="輸入密碼" name="password" required>
+            <button type="submit" class="btn">登入帳戶</button>
+            <div id="loginmsg" class="msg"></div>
+            <a class="formToggle" onclick="switchToRegister()">還沒有帳戶？點此註冊</a>
+        </form>
+        <form method="post" id="register" action="/api/user" class="register">
+            <div class="bar"></div>
+            <span class="close" onclick="closeForm()"><img src={{ url_for('static', filename = 'icon_close.png') }} alt=""></span>
+            <h1>註冊會員帳號</h1>
+            <input type="text" placeholder="輸入姓名" name="name" required>
+            <input type="email" placeholder="輸入電子郵件" name="emailAccount" required>
+            <input type="password" placeholder="輸入密碼" name="password" required>
+            <button type="submit" class="btn">註冊新帳戶</button>
+            <div id="registermsg" class="msg"></div>
+            <a class="formToggle" onclick="switchToLogin()">已經有帳戶了？點此登入</a>
+        </form>
+    </div>
+<div id="BookingInfo" class="BookingInfo">
+    <div><span style="color: red;">付款成功</span>，感謝您訂購台北一日遊行程</div>
+    <div>您得訂單編號為 <span id="uuid" class="uuid"></span>
+        <span class="paybtncontainer" id="paybtncontainer" title="CopyUUID" onclick="copyUUID()"><img id="copybtn" class ="copybtn" src= {{ url_for('static', filename = 'copy_icon.png') }} alt="Copy UUID"></span>
+    </div>
+    <form id="sendingForm" class="sendingForm">
+        <div>您可以將您的訂單明細寄送到指定的信箱</div>
+        <label for="email">信箱:</label>
+        <input type="email" name="email" id="email" class="emailInput">
+        <input type="hidden" name="user" id="user">
+        <input type="hidden" name="date" id="date">
+        <input type="hidden" name="site" id="site">
+        <button type="button" onclick="sendMail()" class="Sendbtn">寄送</button>
+    </form>
+</div>
+<main id="showNoBookingInfo" class="showNoBookingInfo">
+    <nav id="Nav2" class="Nav2">
+        <a href="/" class="navEle1">台北一日遊</a>
+        <div class="navDiv1">
+            <a href="/booking" class="navEle2">預定行程</a>
+            <button id="login2" class="navEle2 navSubCSS1" onclick="openloginForm()">登入/註冊</button>
+            <button id="logout2" class="navEle2 navSubCSS1 logout" onclick="logOut()">登出系統</button>
+        </div>
+    </nav>
+    <div id="BookingInfo" class="BookingInfo">
+        <div class="noBookingInfoBox">查無此訂單編號</div>
+    </div>
+</main>
+<footer>
+    <div class="footerStr">COPYRIGHT © 2021 台北一日遊</div>
+</footer>
+</body>
+<script>
+
+function copyUUID() {
+    var r = document.createRange();
+    r.selectNode(document.getElementById("uuid"));
+    window.getSelection().removeAllRanges();
+    window.getSelection().addRange(r);
+    document.execCommand('copy');
+    window.getSelection().removeAllRanges();
+}
+
+function GetPaidOrder(orderid) {
+    return fetch(`/api/orders${orderid}`)
+}
+orderid = getorderid()
+orderUUID = orderid.substring( 8, orderid.length)
+document.getElementById("uuid").innerText = orderUUID
+function getorderid() {
+    let orderid = window.location.search;
+    return orderid
+}
+
+GetPaidOrder(orderid).then((resp) => {
+    return resp.json()
+}).then((data) => {
+    if (data.data != null) {
+    console.log(data)
+    console.log(data.data.contact.name)
+    document.getElementById("user").value = data.data.contact.name
+    document.getElementById("site").value = data.data.trip.attraction.name
+    document.getElementById("date").value = data.data.trip.date
+    }
+    else {
+    document.getElementById("mainNav").style.display = 'none';
+    document.getElementById("BookingInfo").style.display = 'none';
+    document.getElementById("showNoBookingInfo").style.display = "block"
+    }
+}).catch((err) => { console.log(err) })
+
+
+function showLoader() {
+        document.getElementById("bg").style.display = 'block'
+        document.getElementById("loader").style.display = 'block'
+    }
+
+    function hideLoader() {
+        document.getElementById("bg").style.display = 'none'
+        document.getElementById("loader").style.display = 'none'
+    }
+
+    function dateOffset(date) {
+        let gmtDate = new Date(date)
+        let offset = gmtDate.getTimezoneOffset();
+        let localDate = new Date(gmtDate.getTime() - offset * 60 * 1000)
+        let formattedDate = localDate.toISOString().substring(0, 10);
+        return formattedDate
+    }
+
+    const registerForm = document.getElementById("register");
+    registerForm.addEventListener("submit", () => {
+        event.preventDefault()
+        const formData = new FormData(registerForm);
+        const data = Object.fromEntries(formData);
+        
+        fetch("/api/user", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        }).then((res) => {
+            if (res.ok) {
+                document.getElementById("registermsg").innerText = "註冊成功，請重新登入"
+            }
+            else if (res.status == 400) {
+                 document.getElementById("registermsg").innerText = "註冊失敗，重複的 Email 或其他原因" 
+            }
+            else if (res.status == 500) {
+                document.getElementById("registermsg").innerText = "伺服器內部錯誤" 
+            }
+            return res.json()})
+        .then((data) => {
+            // console.log(data)
+        })
+    });
+
+    const loginForm = document.getElementById("loginForm");
+
+    loginForm.addEventListener("submit", () => {
+        event.preventDefault()
+        const formData = new FormData(loginForm);
+        const data = Object.fromEntries(formData);
+
+        fetch("/api/user/auth", {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        })
+        .then((res) => {
+            if (res.ok) {
+                document.getElementById("loginmsg").innerText = "登入成功"
+                closeForm()
+                document.getElementById("login").style.display= 'none'
+                document.getElementById("logout").style.display = 'block'
+                document.getElementById("login2").style.display= 'none'
+                document.getElementById("logout2").style.display = 'block'
+            }
+            else if (res.status == 400) {
+                 document.getElementById("loginmsg").innerText = "登入失敗" 
+            }
+            else if (res.status == 500) {
+                document.getElementById("loginmsg").innerText = "伺服器內部錯誤" 
+            }
+            return res.json()})
+        .then((data) => {
+            // console.log(data)
+        })
+    });
+
+    document.getElementById("logout").addEventListener("click", () => {
+        fetch("/api/user/auth", {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then((res) => {
+            if (res.ok) {
+                logOut()
+                window.location.href = "/"
+            }
+        })
+    })
+
+    function logOut() {
+        document.getElementById("login").style.display= 'block'
+        document.getElementById("logout").style.display = 'none'
+    }
+
+    function openloginForm() {
+        document.getElementById("bg").style.display = "block";
+        document.getElementById("loginForm").style.display = "flex";
+        
+    }
+
+    function switchToRegister() {
+        document.getElementById("loginForm").style.display = "none";
+        document.getElementById("register").style.display = "flex";
+    }
+
+    function switchToLogin() {
+        openloginForm();
+        document.getElementById("register").style.display = "none";
+    }
+
+    function closeForm() {
+        document.getElementById("loginForm").style.display = "none";
+        document.getElementById("register").style.display = "none";
+        document.getElementById("bg").style.display = "none";
+    }
+
+    checkIfLogIn().then(
+        (userInfo) => {
+            // console.log(userInfo)
+            if (userInfo.id != null) {
+                document.getElementById("login").style.display= 'none'
+                document.getElementById("logout").style.display = 'block'
+                document.getElementById("login2").style.display= 'none'
+                document.getElementById("logout2").style.display = 'block'
+            }
+            else {
+                window.location.href = "/"
+            }
+        }
+    )
+
+    function checkIfLogIn(){
+        return fetch("/api/user/auth",
+        {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }
+        ).then(function(response) {
+            if (response.status == 200) {
+                myJson = response.json();
+                return myJson
+            }
+            else 
+                return response.json()
+            })
+        }
+</script>
+</html>

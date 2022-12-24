@@ -3,6 +3,11 @@ import json, re, mysql.connector
 from mysql.connector import pooling, Error
 import jwt, datetime
 from flask_cors import CORS
+import requests
+import uuid
+import pytz
+import datetime
+
 
 app=Flask(__name__)
 CORS(app)
@@ -43,6 +48,19 @@ def requestCon(sql, args):
 		cursor.close()
 		connection_object.close()
 		return record
+
+def isUser(UserToken): 
+	userInfo = decoding(UserToken)
+	userEmail = userInfo["email"]
+	checkDBSQL = """
+	select * from member where email = %s
+	"""
+	args = (userEmail,)
+	checkIfMember = requestCon(checkDBSQL, args)
+	if checkIfMember:
+		return True
+	else:
+		return False
 
 def makeCategoriesRes(list):
 	dataDict = dict()
@@ -374,6 +392,135 @@ def auth():
 # 		return
 # 	else:
 # 		return
+
+@app.route("/api/orders", methods=['GET', 'POST'])
+def ordersHandler():
+	userToken = request.cookies.get('token')
+	if (isUser(userToken)):
+		data = dict()
+		data["cardholder"] = dict()
+		if request.method == 'POST':
+			order = request.json
+			data["prime"] = order["prime"]
+			data["partner_key"] = "partner_IFz9mEpscF0mhV9nXpnSiALckVxIMs91KtxjfQt33LEDs5VsdCmCo8io"
+			data["merchant_id"] = "ken5475ht_ESUN"
+			data["details"] = "TapPay Test"
+			data["amount"] = order["order"]["price"]
+			data["cardholder"]["phone_number"] = order["order"]["trip"]["contact"]["phone"]
+			data["cardholder"]["name"] = order["order"]["trip"]["contact"]["name"]
+			data["cardholder"]["email"] = order["order"]["trip"]["contact"]["email"]
+			orderid = str(uuid.uuid4())
+			RecordOrderSQl = """
+			insert into orderDetails (orderid, prime, price, siteid, name, address, image, date, time, username, email, phone, orderStatus) 
+			values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
+			"""
+			args = (orderid, order["prime"], order["order"]["price"], order["order"]["trip"]["attraction"]["id"],
+			order["order"]["trip"]["attraction"]["name"], order["order"]["trip"]["attraction"]["address"],
+			order["order"]["trip"]["attraction"]["image"], order["order"]["trip"]["date"], order["order"]["trip"]["time"],
+			order["order"]["trip"]["contact"]["name"], order["order"]["trip"]["contact"]["email"], order["order"]["trip"]["contact"]["phone"],
+			"未付款")
+			requestCon(RecordOrderSQl, args)
+
+			RecordPaymentSQL = """
+			insert into paymentDetails (orderid) values (%s);
+			"""
+			PaymentArgs = (orderid,)
+			requestCon(RecordPaymentSQL, PaymentArgs)
+			headers = {'Content-Type': 'application/json',
+						'x-api-key': 'partner_IFz9mEpscF0mhV9nXpnSiALckVxIMs91KtxjfQt33LEDs5VsdCmCo8io'}
+			response = requests.post('https://sandbox.tappaysdk.com/tpc/payment/pay-by-prime', json=data, headers=headers)
+			if (response.json()["status"] == 0):
+				frontEndResp = dict()
+				frontEndResp["data"] =dict()
+				frontEndResp["data"]["payment"] = dict()
+				response = response.json()
+				print(response)
+				UpdatePayStatusSQl = """
+				update orderDetails set orderStatus = %s where orderid = %s;
+				"""
+				args = ("已付款", orderid)
+				requestCon(UpdatePayStatusSQl, args)
+
+				UpdatePaymentDetailsSQl = """
+				update paymentDetails set 
+				status = %s, 
+				msg = %s, 
+				amount = %s, 
+				acquirer = %s, 
+				currency = %s, 
+				rec_trade_id = %s, 
+				bank_transaction_id = %s, 
+				auth_code = %s, 
+				type = %s, 
+				last_four = %s, 
+				bin_code = %s, 
+				transaction_time_millis = %s, 
+				start_time_millis = %s, 
+				end_time_millis = %s, 
+				card_identifier = %s, 
+				merchant_id = %s
+				where orderid = %s;
+				"""
+				updatesArgs = (response["status"], response["msg"], response["amount"], 
+				response["acquirer"], response["currency"],
+				response["rec_trade_id"], response["bank_transaction_id"], 
+				response["auth_code"], response["card_info"]["type"], response["card_info"]["last_four"], 
+				response["card_info"]["bin_code"],
+				response["transaction_time_millis"], response["bank_transaction_time"]["start_time_millis"],
+				response["bank_transaction_time"]["end_time_millis"], response["card_identifier"], 
+				response["merchant_id"], orderid)
+				
+				requestCon(UpdatePaymentDetailsSQl, updatesArgs)
+				frontEndResp["data"]["number"] = orderid
+				frontEndResp["data"]["payment"]["status"] = response["status"]
+				frontEndResp["data"]["payment"]["message"] = "付款成功"
+
+				return make_response(jsonify(frontEndResp), 200)
+			elif (response.json()["status"] != 0):
+				msg = "付款失敗"
+				return err(msg, 400)
+			else:
+				msg = "伺服器錯誤"
+				return err(msg, 500)
+		elif request.method == 'GET':
+			print(1111)
+			orderid = request.args.get('number')
+			searchOrderSQL = """
+			select * from orderDetails where orderid = %s
+			"""
+			args = (orderid,)
+			result = requestCon(searchOrderSQL, args)
+			if result != []:
+				resp = dict()
+				resp["data"] = dict()
+				resp["data"]["trip"] = dict()
+				resp["data"]["trip"]["attraction"] = dict()
+				resp["data"]["contact"] = dict()
+				dateTime = result[0][13]
+				date = datetime.datetime.strptime(str(dateTime), '%Y-%m-%d %H:%M:%S')
+				local_tz = pytz.timezone('Asia/Taipei')
+				local_date = date.astimezone(local_tz)
+				formatted_date = local_date.strftime('%Y-%m-%d')
+				resp["data"]["number"] = result[0][0]
+				resp["data"]["price"] = result[0][2]
+				resp["data"]["trip"]["attraction"]["id"] = result[0][3]
+				resp["data"]["trip"]["attraction"]["name"] = result[0][4]
+				resp["data"]["trip"]["attraction"]["address"] = result[0][5]
+				resp["data"]["trip"]["attraction"]["image"] = result[0][6]
+				resp["data"]["trip"]["date"] = formatted_date
+				resp["data"]["trip"]["time"] = result[0][8]
+				resp["data"]["contact"]["name"] = result[0][9]
+				resp["data"]["contact"]["email"] = result[0][10]
+				resp["data"]["contact"]["phone"] = result[0][11]
+				resp["data"]["status"] = 1
+				return make_response(jsonify(resp), 200, {'Content-Type': 'application/json'})
+			else:
+				msg = "請登入系統再查詢"
+				return err(msg, 403)
+			return orderid
+	else:
+		msg = "未登入系統"
+		return err(msg, 403)
 
 @app.route("/api/attractions")
 def lookUpSitesAPI():
