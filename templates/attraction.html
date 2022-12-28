@@ -28,17 +28,17 @@
         }
 
         .navDiv1 {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 64px;
-        padding-right: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 64px;
+            padding-right: 10px;
         }
 
         .navDiv1 > button {
             background-color: white;
             border: none;
-            height: 30px;
+            /* height: 30px; */
         }
 
         .navDiv1 > button:hover {
@@ -61,12 +61,15 @@
         }
 
         .navEle2 {
-            font-size: 16px;
+            width: 50px;
+            height: 50px;
+            /* font-size: 16px; */
             /* padding: 20px 0px; */
-            color: #666666;
-            font-weight: 500;
+            /* color: #666666; */
+            /* font-weight: 500; */
             /* text-decoration: none; */
         }
+
 
         .Nav2 {
             max-width: 1200px;
@@ -88,14 +91,20 @@
         }
 
         .navEle3 {
-            color: #666666;
-            font-weight: 500;
-            font-size: 16px;
+            width: 30px;
+            height: 30px;
             text-decoration: none;
         }
 
-        .navEle3:hover {
+        .navEle3 img, .navEle2 img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
             opacity: 0.7;
+        }
+
+        .navEle3:hover, .navEle1:hover, .navEle2:hover {
+            opacity: 0.4;
             cursor: pointer;
         }
 
@@ -656,9 +665,9 @@
     <nav>
         <a href="/" class="navEle1">台北一日遊</a>
         <div class="navDiv1">
-            <a onclick="checkOrder()" class="navEle3">預定行程</a>
-            <button id="login" class="navEle2 navSubCSS1" onclick="openloginForm()">登入/註冊</button>
-            <button id="logout" class="navEle2 navSubCSS1 logout" onclick="logOut()">登出系統</button>
+            <a onclick="checkOrder()" class="navEle3"><img src={{ url_for('static', filename = 'cart.png') }} alt=""></a>
+            <button id="login" class="navEle2 navSubCSS1" onclick="openloginForm()"><img src={{ url_for('static', filename = 'login.png') }} alt=""></button>
+            <button id="logout" class="navEle2 navSubCSS1 logout" onclick="logOut()"><img src={{ url_for('static', filename = 'logout.png') }} alt=""></button>
         </div>
     </nav>
     <div id="bg" class="bg">
@@ -834,6 +843,7 @@ function showSlides(n) {
     dots[slideIndex-1].className += " active";
 }
 // console.log(id)
+showLoader()
 fetch(`/api/attraction/${id}`).then((resp) => (resp.json())).then((myJson)=>{
     let SliderImgsLinks = myJson.data.images
     let SiteTitle = myJson.data.name
@@ -893,7 +903,7 @@ fetch(`/api/attraction/${id}`).then((resp) => (resp.json())).then((myJson)=>{
     showSlides(slideIndex);
     hideLoader();
 }).catch((e) => {console.log(e)})
-showLoader()
+
 
 function showLoader() {
         document.getElementById("bg").style.display = 'block'
