@@ -811,8 +811,14 @@ button.addEventListener("click", function(e) {
             data.attractionId = id
         }
         // console.log(data)
-        booking.postForm(data)
-        window.location.href = "/booking"  
+        booking.postForm(data).then(resp => {
+            if (resp.status == 200) {
+                window.location.href = "/booking" 
+            }
+            else {
+                alert("訂購失敗")
+            }
+        })
         }
     })
 })
