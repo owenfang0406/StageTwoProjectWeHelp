@@ -147,9 +147,11 @@
         }
 
         .navDiv1 {
-            display: flex;
-            height: 64px;
-            padding-right: 10px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 64px;
+        padding-right: 10px;
         }
 
         .navDiv1 > button {
@@ -169,8 +171,8 @@
             padding: 10px;
             color: #448899;
             font-family: 'Noto Sans TC';
-            font-weight: 700;
-            text-decoration: none;  
+            font-weight: 700;  
+            text-decoration: none;
         }
 
         .navEle1:hover {
@@ -179,18 +181,41 @@
 
         .navEle2 {
             font-size: 16px;
-            padding: 20px 0px;
+            /* padding: 20px 0px; */
             color: #666666;
             font-weight: 500;
-            text-decoration: none;
+            /* text-decoration: none; */
         }
-        
-        .navEle2:hover {
-            cursor: pointer;
+
+        .Nav2 {
+            max-width: 1200px;
+            display: flex;
+            justify-content: space-between;
+            margin: 0 auto;
+            position: inherit;
+            /* position: fixed; */
+            /* right: 0px;
+            left: 0px;
+            top: 0px; */
+            /* z-index: 4; */
+            background-color: white;
+            align-items: center;
         }
-        
+
         .navSubCSS1 {
             margin-left: 10px;
+        }
+
+        .navEle3 {
+            color: #666666;
+            font-weight: 500;
+            font-size: 16px;
+            text-decoration: none;
+        }
+
+        .navEle3:hover {
+            opacity: 0.7;
+            cursor: pointer;
         }
 
         .helloPage {
@@ -395,6 +420,38 @@
             transition: 0.5s;
         }
 
+        .loader {
+            position: absolute;
+            top: calc(50vh - 76px);
+            left: calc(50vw - 76px);
+            border: 16px solid #f3f3f3;
+            border-radius: 50%;
+            border-top: 16px solid #666666;
+            border-right: 16px solid gold;
+            border-bottom: 16px solid #448899;
+            border-left: 16px solid rgb(68, 68, 176);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 120px;
+            height: 120px;
+            -webkit-animation: spin 2s linear infinite;
+            animation: spin 2s linear infinite;
+            display: none;
+        }
+
+        @-webkit-keyframes spin {
+        0% { -webkit-transform: rotate(0deg); }
+        100% { -webkit-transform: rotate(360deg); }
+        }
+
+        @keyframes spin {
+        0% { transform: rotate(0deg); }
+        25% { border-radius: 0%;}
+        50% { border-radius: 25%; }
+        100% { transform: rotate(360deg); }
+        }
+
         @media screen and (max-width: 1200px) {
             nav {
                 min-width: 800px;
@@ -463,12 +520,13 @@
     <nav>
         <a href="/" class="navEle1">台北一日遊</a>
         <div class="navDiv1">
-            <a onclick="checkOrder()" class="navEle2">預定行程</a>
+            <a onclick="checkOrder()" class="navEle3">預定行程</a>
             <button id="login" class="navEle2 navSubCSS1" onclick="openloginForm()">登入/註冊</button>
             <button id="logout" class="navEle2 navSubCSS1 logout" onclick="logOut()">登出系統</button>
         </div>
     </nav>
     <div id="bg" class="bg">
+        <div id="loader" class="loader"></div>
         <form id="loginForm" class="loginForm" action="">
             <span class="close" onclick="closeForm()"><img src={{ url_for('static', filename = 'icon_close.png') }} alt=""></span>
             <div class="bar"></div>
@@ -626,6 +684,15 @@
         document.getElementById("bg").style.display = "none";
     }
 
+    function showLoader() {
+        document.getElementById("bg").style.display = 'block'
+        document.getElementById("loader").style.display = 'block'
+    }
+
+    function hideLoader() {
+        document.getElementById("bg").style.display = 'none'
+        document.getElementById("loader").style.display = 'none'
+    }
     // document.addEventListener("click", function (e) {
     //     if(e.target.id !== "login") {
     //         closeForm();
@@ -672,16 +739,16 @@
         }else return
     }
 
-    checkIfLogIn().then(
-        (userInfo) => {
-            console.log(userInfo)
-            if (userInfo.id != null) {
-                document.getElementById("login").style.display= 'none'
-                document.getElementById("logout").style.display = 'block'
-            }
-            else return
-        }
-    )
+    // checkIfLogIn().then(
+    //     (userInfo) => {
+    //         console.log(userInfo)
+    //         if (userInfo.id != null) {
+    //             document.getElementById("login").style.display= 'none'
+    //             document.getElementById("logout").style.display = 'block'
+    //         }
+    //         else return
+    //     }
+    // )
 
     function checkIfLogIn(){
         return fetch("/api/user/auth",
@@ -841,6 +908,18 @@
         console.log(pageIndex,keyword)
         , {threshold: 1}}})
     
+
+    checkIfLogIn().then(
+    (userInfo) => {
+        console.log(userInfo)
+        if (userInfo.id != null) {
+            document.getElementById("login").style.display= 'none'
+            document.getElementById("logout").style.display = 'block'
+        }
+        else return
+        }   
+    )    
+    
     fetchCategoriesJson()
         .then((Myjson) => {
         for(let i = 0; i < Myjson.data.length; i ++) {
@@ -858,8 +937,10 @@
                 searchKeyword();
             })
             }
+            hideLoader();
         })
-
+    
+    showLoader();
     fetchAttractionsJSON(pageIndex)
         .then((Myjson) => {
             PicBoxes = document.querySelectorAll(".picBox");

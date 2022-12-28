@@ -30,9 +30,11 @@
         }
 
         .navDiv1 {
-            display: flex;
-            height: 64px;
-            padding-right: 10px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 64px;
+        padding-right: 10px;
         }
 
         .navDiv1 > button {
@@ -62,10 +64,10 @@
 
         .navEle2 {
             font-size: 16px;
-            padding: 20px 0px;
+            /* padding: 20px 0px; */
             color: #666666;
             font-weight: 500;
-            text-decoration: none;
+            /* text-decoration: none; */
         }
 
         .Nav2 {
@@ -85,6 +87,18 @@
 
         .navSubCSS1 {
             margin-left: 10px;
+        }
+
+        .navEle3 {
+            color: #666666;
+            font-weight: 500;
+            font-size: 16px;
+            text-decoration: none;
+        }
+
+        .navEle3:hover {
+            opacity: 0.7;
+            cursor: pointer;
         }
 
         .bg {
@@ -429,14 +443,17 @@
 
         .loader {
             position: absolute;
-            top: 40vh;
-            left: 50vw;
+            top: calc(50vh - 76px);
+            left: calc(50vw - 76px);
             border: 16px solid #f3f3f3;
             border-radius: 50%;
             border-top: 16px solid #666666;
             border-right: 16px solid gold;
             border-bottom: 16px solid #448899;
-            border-left: 16px solid blue;
+            border-left: 16px solid rgb(68, 68, 176);
+            display: flex;
+            justify-content: center;
+            align-items: center;
             width: 120px;
             height: 120px;
             -webkit-animation: spin 2s linear infinite;
@@ -451,7 +468,16 @@
 
         @keyframes spin {
         0% { transform: rotate(0deg); }
+        25% { border-radius: 0%;}
+        50% { border-radius: 25%; }
         100% { transform: rotate(360deg); }
+        }
+
+        @media screen and (max-width: 1200px) {
+            nav {
+                padding: 0px 10px;
+            }
+            
         }
 
         @media screen and (max-width: 1000px) {
@@ -539,7 +565,7 @@
     <nav id="mainNav">
         <a href="/" class="navEle1">台北一日遊</a>
         <div class="navDiv1">
-            <a href="/booking" class="navEle2">預定行程</a>
+            <a href="/booking" class="navEle3">預定行程</a>
             <button id="login" class="navEle2 navSubCSS1" onclick="openloginForm()">登入/註冊</button>
             <button id="logout" class="navEle2 navSubCSS1 logout" onclick="logOut()">登出系統</button>
         </div>
