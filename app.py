@@ -182,9 +182,21 @@ def decoding(usrToken):
 def profiles():
 	userToken = request.cookies.get('token')
 	if (isUser(userToken)):
+		userInfo = decoding(userToken)
+		print(userInfo)
 		if request.method == 'POST':
 			json = request.json
 			print(json)
+			avatarPic = json["url"]
+			email = json["email"]
+			updateAvtarsql = """
+			UPDATE member SET avatar = %s
+			where email = %s;
+			"""
+			args = (avatarPic, email)
+			requestCon(updateAvtarsql, args)
+
+			return make_response(jsonify(json), 200)
 	else:
 		return err("請登入系統", 403)	
 
@@ -347,6 +359,7 @@ def auth():
 				userInfo["id"] = memberInfo[0][0]
 				userInfo["name"] = memberInfo[0][1]
 				userInfo["email"] = memberInfo[0][2]
+				userInfo["avatar"] = memberInfo[0][4]
 				encode_jwt = jwt.encode(userInfo, secret, algorithm='HS256')
 				# print(encode_jwt)
 				resp = dict()
@@ -367,6 +380,17 @@ def auth():
 			if userToken:
 				# print(userToken)
 				userInfo = jwt.decode(userToken,secret, algorithms='HS256')
+				email = userInfo["email"]
+				updateUserSatusSQL = """
+				select * from member where email = %s;
+				"""
+				args = (email,)
+				userNewStatus = requestCon(updateUserSatusSQL, args)
+				userInfo = dict()
+				userInfo["id"] = userNewStatus[0][0]
+				userInfo["name"] = userNewStatus[0][1]
+				userInfo["email"] = userNewStatus[0][2]
+				userInfo["avatar"] = userNewStatus[0][4]
 				resp = make_response(userInfo, 200)
 				resp.headers.add('Access-Control-Allow-Origin', '*')
 				return resp
@@ -613,6 +637,9 @@ def booking():
 @app.route("/thankyou")
 def thankyou():
 	return render_template("thankyou.html")
+@app.route("/member")
+def member():
+	return render_template("member.html")
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=3000)

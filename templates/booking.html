@@ -421,6 +421,36 @@
             max-width: 100%;
         }
 
+        .avatar {
+            display: none;
+            width: 50px;
+            height: 50px;
+            /* background-color: #757575; */
+            border-radius: 50%;
+            border: 2px solid gold;
+            margin: 0px 10px;
+        }
+
+        .avatar:hover {
+            cursor: pointer;
+            opacity: 0.7;
+        }
+
+        .avatarIcon{
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: inherit;
+            display: none;
+        }
+
+        .uploadmsg {
+            color: red;
+            font-size: 16px;
+            font-weight: 500;
+            font-family: 'Noto Sans TC';
+        }
+
         footer {
             justify-content: center;
             align-items: center;
@@ -577,6 +607,9 @@
             <a onclick="checkOrder()" class="navEle3"><img src={{ url_for('static', filename = 'cart.png') }} alt=""></a>
             <button id="login" class="navEle2 navSubCSS1" onclick="openloginForm()"><img src={{ url_for('static', filename = 'login.png') }} alt=""></button>
             <button id="logout" class="navEle2 navSubCSS1 logout" onclick="logOut()"><img src={{ url_for('static', filename = 'logout.png') }} alt=""></button>
+            <div id="avatar" class="avatar" onclick="member()">
+                <img class="avatarIcon" id="avatarIcon" src="" alt="">
+            </div>
         </div>
     </nav>
     <div id="bg" class="bg">
@@ -682,6 +715,9 @@
                 <a href="/booking" class="navEle3"><img src={{ url_for('static', filename = 'cart.png') }} alt=""></a>
                 <button id="login2" class="navEle2 navSubCSS1" onclick="openloginForm()"><img src={{ url_for('static', filename = 'login.png') }} alt="">/button>
                 <button id="logout2" class="navEle2 navSubCSS1 logout" onclick="logOut()"><img src={{ url_for('static', filename = 'logout.png') }} alt=""></button>
+                <div id="avatar1" class="avatar" onclick="member()">
+                    <img class="avatarIcon" id="avatarIcon1" src="" alt="">
+                </div>
             </div>
         </nav>
         <div id="BookingInfo" class="BookingInfo">
@@ -695,9 +731,10 @@
 </body>
 <script src="https://js.tappaysdk.com/sdk/tpdirect/v5.14.0"></script>
 <script>
+    let userData = {}
     class Confirmation {
         constructor(url) {
-            console.log(typeof(url))
+            // console.log(typeof(url))
             this.url = url;
         }
 
@@ -1102,18 +1139,39 @@
         (userInfo) => {
             // console.log(userInfo)
             if (userInfo.id != null) {
+                console.log(userInfo)
+                userData = userInfo
                 document.getElementById("userName").innerText = userInfo.name
                 document.getElementById("userName2").innerText = userInfo.name
                 document.getElementById("login").style.display= 'none'
                 document.getElementById("logout").style.display = 'block'
                 document.getElementById("login2").style.display= 'none'
                 document.getElementById("logout2").style.display = 'block'
+                document.getElementById("avatar").style.display = 'block';
+                document.getElementById("avatarIcon").style.display = 'block';
+                document.getElementById("avatar1").style.display = 'block';
+                document.getElementById("avatarIcon1").style.display = 'block';
+                if (userInfo.avatar == null ) {
+                    // document.getElementById("avatar1") = "block"
+                    document.getElementById("avatarIcon1").setAttribute("src", "/static/user.png")
+                    avatar.style.display = "block"
+                    document.getElementById("avatarIcon").setAttribute("src", "/static/user.png")
+                    return
+                }
+                // document.getElementById("avatar1") = "block"
+                document.getElementById("avatarIcon1").setAttribute("src", userInfo.avatar)
+                avatar.style.display = "block"
+                document.getElementById("avatarIcon").setAttribute("src", userInfo.avatar)
             }
             else {
                 window.location.href = "/"
             }
         }
     )
+
+    function member() {
+        window.location.href = "/member"
+    }
 
     function checkIfLogIn(){
         return fetch("/api/user/auth",
