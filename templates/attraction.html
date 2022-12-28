@@ -778,8 +778,10 @@ let url = "/api/booking"
 const booking = new confirmation(url)
 
 const options = document.getElementById("options");
+const button = document.getElementById("sendOptions")
 
-options.addEventListener("submit", function(e) {
+
+button.addEventListener("click", function(e) {
     e.preventDefault()
     isLoggedIn = checkIfLogIn()
     isLoggedIn.then(resp => {
@@ -789,7 +791,7 @@ options.addEventListener("submit", function(e) {
             document.getElementById("loginForm").style.display = 'flex'
         }
         else {
-            const formData = new FormData(this);
+            const formData = new FormData(options);
         for (const entry of formData.entries()) {
             // console.log(entry)
         }
