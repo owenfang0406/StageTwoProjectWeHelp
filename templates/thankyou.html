@@ -25,6 +25,13 @@
             .then((resp) => {
             console.log(resp)
             console.log(params)
+            if (resp.status == 200) {
+                document.getElementById("email").value = '';
+                document.getElementById("mailmsg").innerText = "寄送成功";
+            
+            } else {
+                document.getElementById("mailmsg").innerText = "寄送失敗";
+            }
             });
 
         }
@@ -291,7 +298,7 @@
     }
 
     .uploadmsg {
-        color: red;
+        color: white;
         font-size: 16px;
         font-weight: 500;
         font-family: 'Noto Sans TC';
@@ -452,6 +459,7 @@
         <input type="hidden" name="date" id="date">
         <input type="hidden" name="site" id="site">
         <button type="button" onclick="sendMail()" class="Sendbtn">寄送</button>
+        <div id="mailmsg" class="uploadmsg"></div>
     </form>
 </div>
 <main id="showNoBookingInfo" class="showNoBookingInfo">
