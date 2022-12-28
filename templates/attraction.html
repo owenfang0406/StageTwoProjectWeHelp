@@ -1014,6 +1014,7 @@ const registerForm = document.getElementById("register");
                 closeForm()
                 document.getElementById("login").style.display= 'none'
                 document.getElementById("logout").style.display = 'block'
+                location.reload()
             }
             else if (res.status == 400) {
                  document.getElementById("loginmsg").innerText = "登入失敗" 
@@ -1037,6 +1038,7 @@ const registerForm = document.getElementById("register");
         .then((res) => {
             if (res.ok) {
                 logOut()
+                location.reload()
             }
         })
     })

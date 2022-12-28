@@ -1080,6 +1080,7 @@
                 document.getElementById("logout").style.display = 'block'
                 document.getElementById("login2").style.display= 'none'
                 document.getElementById("logout2").style.display = 'block'
+                location.reload()
             }
             else if (res.status == 400) {
                  document.getElementById("loginmsg").innerText = "登入失敗" 
@@ -1092,6 +1093,22 @@
             // console.log(data)
         })
     });
+
+
+    document.getElementById("logout2").addEventListener("click", () => {
+        fetch("/api/user/auth", {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then((res) => {
+            if (res.ok) {
+                logOut()
+                window.location.href = "/"
+            }
+        })
+    })
 
     document.getElementById("logout").addEventListener("click", () => {
         fetch("/api/user/auth", {
