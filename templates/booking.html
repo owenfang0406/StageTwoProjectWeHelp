@@ -861,7 +861,15 @@
             document.body.style.pointerEvents = "auto"
             console.log(orderid)
             booking.deleteData()
-            window.location.href = `/thankyou?number=${orderid}`
+            .then(resp => {
+                if(resp.status == 200) {
+                    window.location.href = `/thankyou?number=${orderid}`
+                }
+                else {
+                    alert("購物車清空錯誤")
+                }
+            })
+            // window.location.href = `/thankyou?number=${orderid}`
         })
         .catch((err) => {console.log(err)})
     }
