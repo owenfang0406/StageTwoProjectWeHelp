@@ -1012,9 +1012,26 @@ const registerForm = document.getElementById("register");
             if (res.ok) {
                 document.getElementById("loginmsg").innerText = "登入成功"
                 closeForm()
-                document.getElementById("login").style.display= 'none'
-                document.getElementById("logout").style.display = 'block'
-                location.reload()
+                checkIfLogIn().then(
+                (userInfo) => {
+                    console.log(userInfo)
+                    if (userInfo.id != null) {
+                        userData = userInfo
+                        document.getElementById("login").style.display= 'none'
+                        document.getElementById("logout").style.display = 'block'
+                        document.getElementById("avatar").style.display = 'block';
+                        document.getElementById("avatarIcon").style.display = 'block';
+                        if (userInfo.avatar == null ) {
+                            avatar.style.display = "block"
+                            document.getElementById("avatarIcon").setAttribute("src", "/static/user.png")
+                            return
+                        }
+                        avatar.style.display = "block"
+                        document.getElementById("avatarIcon").setAttribute("src", userInfo.avatar)
+                    }
+                    else return
+                })
+                
             }
             else if (res.status == 400) {
                  document.getElementById("loginmsg").innerText = "登入失敗" 
@@ -1038,7 +1055,6 @@ const registerForm = document.getElementById("register");
         .then((res) => {
             if (res.ok) {
                 logOut()
-                location.reload()
             }
         })
     })
@@ -1046,6 +1062,7 @@ const registerForm = document.getElementById("register");
     function logOut() {
         document.getElementById("login").style.display= 'block'
         document.getElementById("logout").style.display = 'none'
+        document.getElementById("avatar").style.display = 'none';
     }
 
     function openloginForm() {

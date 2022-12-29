@@ -93,6 +93,12 @@
             font-size: 19px;
         }
 
+        /* .btn:disabled {
+            background-color: gray;
+            color: white;
+            cursor: not-allowed;
+        } */
+
         .loginForm a ,.loginForm h1, .register a, .register h1 {
             font-family: 'Noto Sans TC';
             font-style: normal;
@@ -585,8 +591,8 @@
             <h1>註冊會員帳號</h1>
             <input type="text" placeholder="輸入姓名" name="name" required>
             <input type="email" placeholder="輸入電子郵件" name="emailAccount" required>
-            <input type="password" placeholder="輸入密碼" name="password" required>
-            <button type="submit" class="btn">註冊新帳戶</button>
+            <input type="password" placeholder="輸入密碼" name="password" id="registerPWD" required>
+            <button type="submit" class="btn" id="registerbtn">註冊新帳戶</button>
             <div id="registermsg" class="msg"></div>
             <a class="formToggle" onclick="switchToLogin()">已經有帳戶了？點此登入</a>
         </form>
@@ -625,6 +631,23 @@
 <script>
     let pageIndex = 0;
     const registerForm = document.getElementById("register");
+    const passwordInput = document.getElementById("registerPWD");
+
+    // passwordInput.addEventListener("input", function() {
+    // const password = passwordInput.value;
+
+    // const regex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[a-zA-Z\d]{10,20}$/;
+
+    // if (regex.test(password)) {
+    //     console.log("Valid password");
+    //     document.getElementById("registermsg").innerText = ""
+    //     document.getElementById("registerbtn").disabled = false;
+    // } else {
+    //     console.log("Invalid password");
+    //     document.getElementById("registermsg").innerText = "密碼格式不正確"
+    //     document.getElementById("registerbtn").disabled = true;
+    // }
+    // });
     registerForm.addEventListener("submit", () => {
         event.preventDefault()
         const formData = new FormData(registerForm);
@@ -670,9 +693,25 @@
             if (res.ok) {
                 document.getElementById("loginmsg").innerText = "登入成功"
                 closeForm()
-                document.getElementById("login").style.display= 'none'
-                document.getElementById("logout").style.display = 'block'
-                location.reload()
+                checkIfLogIn().then(
+                (userInfo) => {
+                    console.log(userInfo)
+                    if (userInfo.id != null) {
+                        userData = userInfo
+                        document.getElementById("login").style.display= 'none'
+                        document.getElementById("logout").style.display = 'block'
+                        document.getElementById("avatar").style.display = 'block';
+                        document.getElementById("avatarIcon").style.display = 'block';
+                        if (userInfo.avatar == null ) {
+                            avatar.style.display = "block"
+                            document.getElementById("avatarIcon").setAttribute("src", "/static/user.png")
+                            return
+                        }
+                        avatar.style.display = "block"
+                        document.getElementById("avatarIcon").setAttribute("src", userInfo.avatar)
+                    }
+                    else return
+                })
             }
             else if (res.status == 400) {
                  document.getElementById("loginmsg").innerText = "登入失敗" 
@@ -696,7 +735,6 @@
         .then((res) => {
             if (res.ok) {
                 logOut()
-                location.reload()
             }
         })
     })
@@ -704,6 +742,7 @@
     function logOut() {
         document.getElementById("login").style.display= 'block'
         document.getElementById("logout").style.display = 'none'
+        document.getElementById("avatar").style.display = 'none';
     }
 
     function openloginForm() {
