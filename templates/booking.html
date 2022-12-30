@@ -395,6 +395,14 @@
             margin-bottom: 25px;
         }
 
+        #err {
+            font-family: 'Noto Sans TC';
+            font-style: normal;
+            font-weight: bold;
+            font-size: 14px;
+            color: red;
+        }
+
         .paybtn {
             width: 173px;
             height: 36px;
@@ -402,6 +410,11 @@
             color: #FFFFFF;
             border-radius: 5px;
             border:none;
+        }
+
+        .paybtn:disabled {
+            background-color: lightgray;
+            cursor: not-allowed;
         }
 
         .paybtn:hover {
@@ -664,6 +677,7 @@
             <label for="fill-phone">手機號碼:</label>
             <input type="text" name="phone" id="phone">
             </div>
+            <div id="err" class="err"></div>
             <div>請保持手機暢通，準時到達，導覽人員將用手機與您聯繫，務必留下正確的聯絡方式。</div>
         </form>
         <hr>
@@ -847,6 +861,7 @@
         // 確認是否可以 getPrime
         if (tappayStatus.canGetPrime === false) {
             alert('can not get prime')
+            hideLoader()
             return
         }
 
@@ -1152,6 +1167,8 @@
         document.getElementById("bg").style.display = "none";
     }
 
+    document.getElementById("paybtn").disabled = true;
+    document.getElementById("err").innerText = "請輸入註冊時的email";
     checkIfLogIn().then(
         (userInfo) => {
             // console.log(userInfo)
@@ -1168,6 +1185,12 @@
                 document.getElementById("avatarIcon").style.display = 'block';
                 document.getElementById("avatar1").style.display = 'block';
                 document.getElementById("avatarIcon1").style.display = 'block';
+                document.getElementById("email").addEventListener("input", () =>{
+                    if (document.getElementById("email").value == userInfo.email) {
+                        document.getElementById("paybtn").disabled = false;  
+                        document.getElementById("err").innerText = "";
+                    }
+                })
                 if (userInfo.avatar == null ) {
                     // document.getElementById("avatar1") = "block"
                     document.getElementById("avatarIcon1").setAttribute("src", "/static/user.png")
