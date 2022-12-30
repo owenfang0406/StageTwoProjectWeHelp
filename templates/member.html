@@ -249,6 +249,7 @@
         margin: 0 auto;
         margin-top: 70px;
         display: flex;
+        flex-wrap: wrap;
         /* flex-wrap: wrap; */
         justify-content: center;
         align-items: center;
@@ -267,6 +268,7 @@
     }
 
     .previewContainer {
+        display: flex;
         width: 400px;
         height: 400px;
         /* background-color: #757575; */
@@ -354,6 +356,60 @@
         font-family: 'Noto Sans TC';
     }
 
+    .ordersCon.open {
+        height: auto;
+    }
+
+    .ordersCon {
+        overflow: hidden;
+        height: 50px;
+        transition: height 0.5s ease;
+        padding: 5px;
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        border: #448899 3px solid;
+        margin-bottom: 50px;
+        border-radius: 10px;
+    }
+
+    .h3 {
+        display: flex;
+        width: 100%;
+        justify-content: center;
+        font-size: 16px;
+        color: #666666;
+        font-family: 'Noto Sans TC';
+        font-weight: bold;
+    }
+
+    .h3:hover {
+        cursor: pointer;
+        opacity: 0.8;
+    }
+
+    .previewh2 {
+        text-align: center;
+        margin: 0 auto;
+        color: #666666;
+        font-family: 'Noto Sans TC';
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .orders {
+        display: flex;
+        border-bottom: 2px solid grey;
+        /* width: 100%; */
+        font-size: 16px;
+        color: #666666;
+        font-family: 'Noto Sans TC';
+        font-weight: 500;
+    }
+
+    .orders:hover {
+        opacity: 0.8;
+    }
     .loader {
         position: absolute;
         top: calc(50vh - 76px);
@@ -452,7 +508,11 @@
         </form>
     </div>
     <main>
+        <div id="orders" class="ordersCon">
+            <h3 class="h3" id="h3btn">請點擊展開訂單記錄</h3>
+        </div>
         <div>
+            <h3 class="previewh2">請上傳您的大頭貼</h3>
             <div id="preview" class="previewContainer">
                 <img src="" alt="Img preview" id="imgPreview" class="imgPreview">
                 <span class="PreviewText">Image Preview</span>
@@ -588,7 +648,11 @@ document.getElementById("uploadbtn").addEventListener("click", function() {
     const previewImg = previewContainer.querySelector(".imgPreview");
     const previewStr = previewContainer.querySelector(".PreviewText");
     const avatar = document.getElementById("avatarIcon");
+    const orderBlock = document.getElementById("orders");
 
+    document.getElementById("h3btn").addEventListener('click', () => {
+        orderBlock.classList.toggle('open');
+    })
     inputFile.addEventListener("change", function() {
         const file = this.files[0];
 
@@ -741,6 +805,9 @@ document.getElementById("uploadbtn").addEventListener("click", function() {
     checkIfLogIn().then(
         (userInfo) => {
             console.log(userInfo)
+            email = userInfo.email
+            // const searchParam = new URLSearchParams();
+            // searchParam.set('email', email);
             if (userInfo.id != null) {
                 // document.getElementById("userName").innerText = userInfo.name
                 // document.getElementById("userName2").innerText = userInfo.name
@@ -748,6 +815,7 @@ document.getElementById("uploadbtn").addEventListener("click", function() {
                 document.getElementById("login").style.display= 'none'
                 document.getElementById("logout").style.display = 'block'
                 document.getElementById("avatar").style.display = 'block';
+                getHistory(email)
                 if (userInfo.avatar == null ) {
                     avatar.style.display = "block"
                     avatar.setAttribute("src", "/static/user.png")
@@ -755,7 +823,6 @@ document.getElementById("uploadbtn").addEventListener("click", function() {
                 }
                 avatar.style.display = "block"
                 avatar.setAttribute("src", userInfo.avatar)
-
                 // document.getElementById("login2").style.display= 'none'
                 // document.getElementById("logout2").style.display = 'block'
 
@@ -766,6 +833,25 @@ document.getElementById("uploadbtn").addEventListener("click", function() {
             }
         }
     )
+
+    async function getHistory(email) {
+        const searchParam = new URLSearchParams();
+        searchParam.set('email', email);
+        const response = await fetch(`/api/history?${searchParam.toString()}`)
+        const orderArr = await response.json()
+        const historyOrders = document.getElementById('orders');
+        console.log(orderArr)
+        if (orderArr[0] == null) {
+            document.getElementById("h3btn").innerText = "您無任何消費紀錄"
+            return
+        }
+        for (const order of orderArr) {
+            const orderCon = document.createElement('div');
+            orderCon.classList.add("orders")
+            historyOrders.appendChild(orderCon);
+            orderCon.innerText = '訂單編號：' + order.orderuui + ' 地點：' + order.site + ' 價格：' + order.price;
+        }
+    }
 
     function checkIfLogIn(){
         return fetch("/api/user/auth",

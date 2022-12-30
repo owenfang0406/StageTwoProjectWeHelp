@@ -553,6 +553,37 @@ def ordersHandler():
 		msg = "未登入系統"
 		return err(msg, 403)
 
+@app.route("/api/history", methods=['GET','POST'])
+def queryHistory():
+	userToken = request.cookies.get('token')
+	if (isUser(userToken)):
+		email = request.args.get('email')
+		if request.method == 'GET':
+			if email != None:
+				queryHistorySQl = """
+				select orderid, price, name, time, orderStatus from orderDetails
+				where email = %s;
+				"""
+				args = (str(email),)
+				orders = requestCon(queryHistorySQl,args)
+				resp = []
+				for order in orders:
+					resp.append({ 
+						'orderuui': order[0],
+						'price': order[1],
+						'site': order[2],
+						'time': order[3],
+						'orderSatus': order[4]
+					})
+				return make_response(resp, 200)
+			else:
+				msg = "請提供email做查詢"
+				return err(msg, 400)
+	else:
+		msg = "未登入系統"
+		return err(msg, 403)
+
+
 @app.route("/api/attractions")
 def lookUpSitesAPI():
 	if request.method == 'GET':
