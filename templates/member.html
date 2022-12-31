@@ -4,62 +4,32 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>感謝您的訂購</title>
-    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-    <script type="text/javascript">
-        (function() {
-            // https://dashboard.emailjs.com/admin/account
-            emailjs.init('R68SNgEGSgZt4oQE5');
-        })();
-    </script>
-    <script type="text/javascript">
-        function sendMail() {
-        let params = {
-            from_name: document.getElementById("user").value,
-            order_uuid: document.getElementById("uuid").innerText,
-            date: document.getElementById("date").value,
-            site: document.getElementById("site").value,
-            to_whom: document.getElementById("email").value
-        }
-            emailjs.send("service_g1tfsrz","template_zqxtp39",params)
-            .then((resp) => {
-            console.log(resp)
-            console.log(params)
-            if (resp.status == 200) {
-                document.getElementById("email").value = '';
-                document.getElementById("mailmsg").innerText = "寄送成功";
-            
-            } else {
-                document.getElementById("mailmsg").innerText = "寄送失敗";
-            }
-            });
+    <title>MemberPage</title>
+    <script src="https://www.gstatic.com/firebasejs/7.17.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/7.17.1/firebase-storage.js"></script>
 
-        }
-
-    </script>
 </head>
-<style> 
+<style>
     @import url(https://fonts.googleapis.com/css2?family=Noto+Sans+TC&display=swap);
     body {
         padding: 0px;
         margin: 0px;
         box-sizing: border-box;
         position: relative;
-        background-color: #757575;
     }
 
     nav {
-            max-width: 1200px;
-            display: flex;
-            justify-content: space-between;
-            margin: 0 auto;
-            position: fixed;
-            right: 0px;
-            left: 0px;
-            top: 0px;
-            z-index: 4;
-            background-color: white;
-            align-items: center;
+        max-width: 1200px;
+        display: flex;
+        justify-content: space-between;
+        margin: 0 auto;
+        position: fixed;
+        right: 0px;
+        left: 0px;
+        top: 0px;
+        z-index: 4;
+        background-color: white;
+        align-items: center;
     }
 
     .navDiv1 {
@@ -274,8 +244,90 @@
         padding-top: 5px;
     }
     
-    .avatar {
+    main {
+        max-width: 1180px;
+        margin: 0 auto;
+        margin-top: 70px;
+        display: flex;
+        flex-wrap: wrap;
+        /* flex-wrap: wrap; */
+        justify-content: center;
+        align-items: center;
+        padding-bottom: 35px;
+        z-index: 2;
+        /* background-color: burlywood; */
+    }
+
+    hr {
+        max-width: 1200px;
+        color: #E8E8E8;
+        margin-top: 30px;
+        border: 1px solid #E8E8E8;
+        margin-top: 45px;
+        margin-bottom: 45px;
+    }
+
+    .previewContainer {
+        display: flex;
+        width: 400px;
+        height: 400px;
+        /* background-color: #757575; */
+        border: 2px solid #dddddd;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-weight: bold;
+        font-size: 30px;
+        color: #cccccccc;
+    }
+
+    .imgForm input[type="file"] {
+        width: 64px;
+        opacity: 0;
+        height: 22px;
+    }
+
+    .Uploadbtn, input[type = submit] {
+    /* Style the ::before pseudo-element */
+    display: flex;
+    position: relative;
+    padding: 8px 16px;
+    border: 2px solid #cccccccc;
+    border-radius: 4px;
+    font-size: 16px;
+    color:white;
+    background-color:#448899;
+    cursor: pointer;
+    margin: 0px 20px;
+    }
+
+    .UploadStr {
+    position: absolute;
+    top: 8px;
+    left: 16px;
+    }
+
+    .Uploadbtn:hover {
+    /* Style the ::before pseudo-element when the input element is hovered over */
+    border-color: #999;
+    }
+    
+
+    .imgPreview {
         display: none;
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+    }
+
+    .imgForm {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .avatar {
         width: 50px;
         height: 50px;
         /* background-color: #757575; */
@@ -298,10 +350,104 @@
     }
 
     .uploadmsg {
-        color: white;
+        color: red;
         font-size: 16px;
         font-weight: 500;
         font-family: 'Noto Sans TC';
+    }
+
+    .ordersCon.open {
+        height: auto;
+    }
+
+    .ordersCon {
+        overflow: hidden;
+        height: 50px;
+        transition: height 0.5s ease;
+        padding: 5px;
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        border: #448899 3px solid;
+        margin-bottom: 50px;
+        border-radius: 10px;
+        margin: 0px 10px;
+    }
+
+    .h3 {
+        display: flex;
+        width: 100%;
+        justify-content: center;
+        font-size: 16px;
+        color: #666666;
+        font-family: 'Noto Sans TC';
+        font-weight: bold;
+    }
+
+    .h3:hover {
+        cursor: pointer;
+        opacity: 0.8;
+    }
+
+    .previewh2 {
+        text-align: center;
+        margin: 0 auto;
+        color: #666666;
+        font-family: 'Noto Sans TC';
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .orders {
+        display: flex;
+        border-bottom: 2px solid grey;
+        /* width: 100%; */
+        font-size: 16px;
+        color: #666666;
+        font-family: 'Noto Sans TC';
+        font-weight: 500;
+    }
+
+    .orders:hover {
+        opacity: 0.8;
+    }
+    .loader {
+        position: absolute;
+        top: calc(50vh - 76px);
+        left: calc(50vw - 76px);
+        border: 16px solid #f3f3f3;
+        border-radius: 50%;
+        border-top: 16px solid #666666;
+        border-right: 16px solid gold;
+        border-bottom: 16px solid #448899;
+        border-left: 16px solid rgb(68, 68, 176);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 120px;
+        height: 120px;
+        -webkit-animation: spin 2s linear infinite;
+        animation: spin 2s linear infinite;
+        display: none;
+    }
+
+    @-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+    }
+
+    @keyframes spin {
+    0% { transform: rotate(0deg); }
+    25% { border-radius: 0%;}
+    50% { border-radius: 25%; }
+    100% { transform: rotate(360deg); }
+    }
+
+    @media screen and (max-width: 1200px) {
+        nav {
+            padding: 0px 10px;
+        }
+        
     }
 
     footer {
@@ -325,90 +471,6 @@
         z-index: 1;
     }
 
-    .showNoBookingInfo {
-            display: none;
-            background-color: #FFFFFF;
-            margin-top: 0px;
-            max-width: 100%;
-    }
-
-    .noBookingInfoBox {
-            font-size: 16px;
-            font-family: 'Noto Sans TC';
-            font-weight: 500;
-            color: #666666;
-    }
-
-    .BookingInfo {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        align-items: center;
-        padding: 10px;
-        border-radius: 15px;
-        margin: 0px auto 0px auto;
-        max-width: 1180px;
-        background-color: rgba(68, 136, 153,0.8);
-        color: white;
-        text-align: center;
-    }
-
-    .BookingInfo div {
-        width: 100%;
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        line-height: 24px;
-        padding: 10px;
-    }
-
-    .uuid {
-        background-color: grey;
-        padding: 0px 10px;
-        border-radius: 5px;
-    }
-    
-    .copybtn {
-        width: 24px;
-        height: 24px;
-        object-fit: cover;
-        display: flex;
-        align-items: center;
-    }
-
-    .copybtn img {
-        width: 100%;
-        height: 100%;
-    }
-
-    .paybtncontainer:hover {
-        cursor: pointer;
-    }
-
-    .Sendbtn {
-        width: 50px;
-        height: 25px;
-        background-color: darkgoldenrod;
-        color: white;
-        font-weight: 500;
-        font-family: 'Noto Sans TC';
-        border: none;
-    }
-
-    .emailInput {
-        margin: 10px 0px;
-        border: 1px solid gray;
-        border-radius: 6px;
-        height: 24px;
-        margin-left: 10px;
-    }
-
-    .sendingForm {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        align-items: center;
-    }
 </style>
 <body>
     <nav id="mainNav">
@@ -417,7 +479,7 @@
             <a onclick="checkOrder()" class="navEle3"><img src={{ url_for('static', filename = 'cart.png') }} alt=""></a>
             <button id="login" class="navEle2 navSubCSS1" onclick="openloginForm()"><img src={{ url_for('static', filename = 'login.png') }} alt=""></button>
             <button id="logout" class="navEle2 navSubCSS1 logout" onclick="logOut()"><img src={{ url_for('static', filename = 'logout.png') }} alt=""></button>
-            <div id="avatar" class="avatar" onclick="member()">
+            <div id="avatar" class="avatar">
                 <img class="avatarIcon" id="avatarIcon" src="" alt="">
             </div>
         </div>
@@ -446,85 +508,179 @@
             <a class="formToggle" onclick="switchToLogin()">已經有帳戶了？點此登入</a>
         </form>
     </div>
-<div id="BookingInfo" class="BookingInfo">
-    <div><span style="color: red;">付款成功</span>，感謝您訂購台北一日遊行程</div>
-    <div>您得訂單編號為 <span id="uuid" class="uuid"></span>
-        <span class="paybtncontainer" id="paybtncontainer" title="CopyUUID" onclick="copyUUID()"><img id="copybtn" class ="copybtn" src= {{ url_for('static', filename = 'copy_icon.png') }} alt="Copy UUID"></span>
-    </div>
-    <form id="sendingForm" class="sendingForm">
-        <div>您可以將您的訂單明細寄送到指定的信箱</div>
-        <label for="email">信箱:</label>
-        <input type="email" name="email" id="email" class="emailInput">
-        <input type="hidden" name="user" id="user">
-        <input type="hidden" name="date" id="date">
-        <input type="hidden" name="site" id="site">
-        <button type="button" onclick="sendMail()" class="Sendbtn">寄送</button>
-        <div id="mailmsg" class="uploadmsg"></div>
-    </form>
-</div>
-<main id="showNoBookingInfo" class="showNoBookingInfo">
-    <nav id="Nav2" class="Nav2">
-        <a href="/" class="navEle1">台北一日遊</a>
-        <div class="navDiv1">
-            <a href="/booking" class="navEle3"><img src={{ url_for('static', filename = 'cart.png') }} alt=""></a>
-            <button id="login2" class="navEle2 navSubCSS1" onclick="openloginForm()"><img src={{ url_for('static', filename = 'login.png') }} alt=""></button>
-            <button id="logout2" class="navEle2 navSubCSS1 logout" onclick="logOut()"><img src={{ url_for('static', filename = 'logout.png') }} alt=""></button>
-            <div id="avatar1" class="avatar" onclick="member()">
-                <img class="avatarIcon" id="avatarIcon1" src="" alt="">
-            </div>
+    <main>
+        <div id="orders" class="ordersCon">
+            <h3 class="h3" id="h3btn">請點擊展開訂單記錄</h3>
         </div>
-    </nav>
-    <div id="BookingInfo" class="BookingInfo">
-        <div class="noBookingInfoBox">查無此訂單編號</div>
-    </div>
-</main>
-<footer>
-    <div class="footerStr">COPYRIGHT © 2021 台北一日遊</div>
-</footer>
+        <div>
+            <h3 class="previewh2">請上傳您的大頭貼</h3>
+            <div id="preview" class="previewContainer">
+                <img src="" alt="Img preview" id="imgPreview" class="imgPreview">
+                <span class="PreviewText">Image Preview</span>
+            </div>
+            <hr>
+            <form action="" class="imgForm">
+                <label for="file" class="Uploadbtn"><span id="UploadStr" class="UploadStr">選擇圖片</span>
+                    <input type="file" name="image" accept="image/*" id="file"></label>
+                <!-- <input type="file" name="image" accept="image/*" capture id="file"> -->
+                <div id="uploadmsg" class="uploadmsg"></div>
+                <button type="submit" id="uploadbtn" class="Uploadbtn">確認上傳</button>
+            </form>
+        </div>
+    </main>
+    <footer>
+        <div class="footerStr">COPYRIGHT © 2021 台北一日遊</div>
+    </footer>   
 </body>
+<script type="module">
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-app.js";
+import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-analytics.js";
+import { getDownloadURL, getStorage } from "https://www.gstatic.com/firebasejs/9.15.0/firebase-storage.js";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyB-WBDNcTnDt2HsinxMEZT7Q6yRI7l-PwQ",
+  authDomain: "stagetwoprojectwehelp.firebaseapp.com",
+  projectId: "stagetwoprojectwehelp",
+  storageBucket: "stagetwoprojectwehelp.appspot.com",
+  messagingSenderId: "535111221739",
+  appId: "1:535111221739:web:8ec340d0ac41b1282d99ae",
+  measurementId: "G-CGVSHHJX63"
+};
+
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+const storage = firebase.storage();
+const storageRef = storage.ref();
+console.log(storage)
+
+
+function uploadImg() {
+    const file = document.querySelector("#file").files[0];
+    if (file == null) {
+        document.getElementById("uploadmsg").innerText = "未選取照片";
+    }
+    const ref = firebase.storage().ref()
+    const name = new Date() + '-' + file.name;
+    const metadata = {
+        contentType:file.type
+    }
+    const task = ref.child(name).put(file,metadata)
+    console.log(file)
+    showLoader()
+    task
+    .then(snapshot => snapshot.ref.getDownloadURL())
+    .then(url => {
+        console.log(url)
+        const updateProfile = new Confirmation("/api/profiles")
+        let data = {
+            url: url,
+            email: userData.email
+        }
+        updateProfile.postForm(data).then(resp => {
+            return resp.json()})
+        .then(json => {
+            if (json.error) {
+                document.getElementById("uploadmsg").innerText = "更新失敗";
+                hideLoader()
+                return
+            } 
+            console.log(json)
+            previewStr.style.display = "block";
+            previewImg.style.display = "none";
+            avatar.style.display = "block";
+            previewImg.setAttribute("src", "");
+            document.getElementById("uploadmsg").innerText = "更新成功";
+            checkIfLogIn().then(json => {
+                avatar.setAttribute("src", json.avatar)
+                hideLoader()
+            })
+        })
+        
+    }).catch(err => {console.log(err)})
+}
+
+document.getElementById("uploadbtn").addEventListener("click", function() {
+    event.preventDefault()
+    uploadImg()
+})
+
+</script>
 <script>
-let userData = {}
+    let userData = {}
 
-function copyUUID() {
-    var r = document.createRange();
-    r.selectNode(document.getElementById("uuid"));
-    window.getSelection().removeAllRanges();
-    window.getSelection().addRange(r);
-    document.execCommand('copy');
-    window.getSelection().removeAllRanges();
-}
+    class Confirmation {
+        constructor(url) {
+            console.log(typeof(url))
+            this.url = url;
+        }
 
-function GetPaidOrder(orderid) {
-    return fetch(`/api/orders${orderid}`)
-}
-orderid = getorderid()
-orderUUID = orderid.substring( 8, orderid.length)
-document.getElementById("uuid").innerText = orderUUID
+        getData() {
+            return fetch(this.url)
+        }
 
-function getorderid() {
-    let orderid = window.location.search;
-    return orderid
-}
+        postForm(data) {
+            return fetch(this.url,
+            {
+                method: "POST",
+                headers: {
+                'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+        }
 
-GetPaidOrder(orderid).then((resp) => {
-    return resp.json()
-}).then((data) => {
-    if (data.data != null) {
-    console.log(data)
-    console.log(data.data.contact.name)
-    document.getElementById("user").value = data.data.contact.name
-    document.getElementById("site").value = data.data.trip.attraction.name
-    document.getElementById("date").value = data.data.trip.date
+        deleteData() {
+            return fetch(this.url,
+            {
+                method: "DELETE"
+            })
+        }
     }
-    else {
-    document.getElementById("mainNav").style.display = 'none';
-    document.getElementById("BookingInfo").style.display = 'none';
-    document.getElementById("showNoBookingInfo").style.display = "block"
-    }
-}).catch((err) => { console.log(err) })
+
+    const inputFile = document.getElementById("file");
+    const previewContainer = document.getElementById("preview");
+    const previewImg = previewContainer.querySelector(".imgPreview");
+    const previewStr = previewContainer.querySelector(".PreviewText");
+    const avatar = document.getElementById("avatarIcon");
+    const orderBlock = document.getElementById("orders");
+
+    document.getElementById("h3btn").addEventListener('click', () => {
+        orderBlock.classList.toggle('open');
+    })
+    inputFile.addEventListener("change", function() {
+        const file = this.files[0];
+
+        if (file) {
+            const reader = new FileReader();
+            
+            previewStr.style.display = "none";
+            previewImg.style.display = "block";
+            // avatar.style.display = "block";
+
+            reader.readAsDataURL(file);
+
+            reader.addEventListener("load", function() {
+                console.log(this);
+                previewImg.setAttribute("src", this.result)
+                // avatar.setAttribute("src", this.result)
+
+            })
+        } else {
+            previewStr.style.display = null;
+            previewImg.style.display = null;
+            previewImg.setAttribute("src", "")
+        }
+    });
 
 
-function showLoader() {
+    function showLoader() {
         document.getElementById("bg").style.display = 'block'
         document.getElementById("loader").style.display = 'block'
     }
@@ -605,21 +761,6 @@ function showLoader() {
         })
     });
 
-    document.getElementById("logout2").addEventListener("click", () => {
-        fetch("/api/user/auth", {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        })
-        .then((res) => {
-            if (res.ok) {
-                logOut()
-                window.location.href = "/"
-            }
-        })
-    })
-
     document.getElementById("logout").addEventListener("click", () => {
         fetch("/api/user/auth", {
             method: 'DELETE',
@@ -664,31 +805,29 @@ function showLoader() {
 
     checkIfLogIn().then(
         (userInfo) => {
-            // console.log(userInfo)
+            console.log(userInfo)
+            email = userInfo.email
+            // const searchParam = new URLSearchParams();
+            // searchParam.set('email', email);
             if (userInfo.id != null) {
-                console.log(userInfo)
-                userData = userInfo
                 // document.getElementById("userName").innerText = userInfo.name
                 // document.getElementById("userName2").innerText = userInfo.name
+                userData = userInfo
                 document.getElementById("login").style.display= 'none'
                 document.getElementById("logout").style.display = 'block'
-                document.getElementById("login2").style.display= 'none'
-                document.getElementById("logout2").style.display = 'block'
                 document.getElementById("avatar").style.display = 'block';
-                document.getElementById("avatarIcon").style.display = 'block';
-                document.getElementById("avatar1").style.display = 'block';
-                document.getElementById("avatarIcon1").style.display = 'block';
+                getHistory(email)
                 if (userInfo.avatar == null ) {
-                    // document.getElementById("avatar1") = "block"
-                    document.getElementById("avatarIcon1").setAttribute("src", "/static/user.png")
                     avatar.style.display = "block"
-                    document.getElementById("avatarIcon").setAttribute("src", "/static/user.png")
+                    avatar.setAttribute("src", "/static/user.png")
                     return
                 }
-                // document.getElementById("avatar1") = "block"
-                document.getElementById("avatarIcon1").setAttribute("src", userInfo.avatar)
                 avatar.style.display = "block"
-                document.getElementById("avatarIcon").setAttribute("src", userInfo.avatar)
+                avatar.setAttribute("src", userInfo.avatar)
+                // document.getElementById("login2").style.display= 'none'
+                // document.getElementById("logout2").style.display = 'block'
+
+                // console.log(userData)
             }
             else {
                 window.location.href = "/"
@@ -696,8 +835,23 @@ function showLoader() {
         }
     )
 
-    function member() {
-        window.location.href = "/member"
+    async function getHistory(email) {
+        const searchParam = new URLSearchParams();
+        searchParam.set('email', email);
+        const response = await fetch(`/api/history?${searchParam.toString()}`)
+        const orderArr = await response.json()
+        const historyOrders = document.getElementById('orders');
+        console.log(orderArr)
+        if (orderArr[0] == null) {
+            document.getElementById("h3btn").innerText = "您無任何消費紀錄"
+            return
+        }
+        for (const order of orderArr) {
+            const orderCon = document.createElement('div');
+            orderCon.classList.add("orders")
+            historyOrders.appendChild(orderCon);
+            orderCon.innerText = '訂單編號：' + order.orderuui + ' 地點：' + order.site + ' 價格：' + order.price;
+        }
     }
 
     function checkIfLogIn(){

@@ -178,11 +178,33 @@ def decoding(usrToken):
 	userInfo = jwt.decode(usrToken, secret, algorithms='HS256')
 	return userInfo
 
+@app.route("/api/profiles",methods=['POST','GET','DELETE'])
+def profiles():
+	userToken = request.cookies.get('token')
+	if (isUser(userToken)):
+		userInfo = decoding(userToken)
+		print(userInfo)
+		if request.method == 'POST':
+			json = request.json
+			print(json)
+			avatarPic = json["url"]
+			email = json["email"]
+			updateAvtarsql = """
+			UPDATE member SET avatar = %s
+			where email = %s;
+			"""
+			args = (avatarPic, email)
+			requestCon(updateAvtarsql, args)
+
+			return make_response(jsonify(json), 200)
+	else:
+		return err("請登入系統", 403)	
+
 @app.route("/api/booking", methods=['POST','GET','DELETE'])
 def book():
 	userToken = request.cookies.get('token')
 	print(userToken)
-	if (userToken):
+	if (isUser(userToken)):
 		userInfo = decoding(request.cookies.get('token'))
 		userID = userInfo["id"]
 		userName = userInfo["name"]
@@ -190,89 +212,86 @@ def book():
 		print(userInfo)
 		crossCheckedToken = encoding(userInfo)
 		print(1)
-		if crossCheckedToken == request.cookies.get('token'):
-			if request.method == 'POST':
-				print(2)
-				json = request.json
-				time = json["time"]
-				price = json["price"]
-				id = json["attractionId"]
-				date = json["date"]
-				QueryData = loopUpId(id).get_json()
-				site = QueryData["data"]["name"]
-				address = QueryData["data"]["address"]
-				image = QueryData["data"]["images"][0]
-				checkOrderSQL = """
-				select * from booking where userEmail = %s;
+		if request.method == 'POST':
+			print(2)
+			json = request.json
+			time = json["time"]
+			price = json["price"]
+			id = json["attractionId"]
+			date = json["date"]
+			QueryData = loopUpId(id).get_json()
+			site = QueryData["data"]["name"]
+			address = QueryData["data"]["address"]
+			image = QueryData["data"]["images"][0]
+			checkOrderSQL = """
+			select * from booking where userEmail = %s;
+			"""
+			args = (userEmail,)
+			order = requestCon(checkOrderSQL, args)
+			if order:
+				overwriteSQL = """
+				UPDATE booking SET
+				userName = %s,
+				userID = %s,
+				attractionID = %s,
+				time = %s,
+				price =%s,
+				site = %s,
+				address = %s,
+				image = %s,
+				date = %s
+				WHERE
+				userEmail = %s;
 				"""
-				args = (userEmail,)
-				order = requestCon(checkOrderSQL, args)
-				if order:
-					overwriteSQL = """
-					UPDATE booking SET
-					userName = %s,
-					userID = %s,
-					attractionID = %s,
-					time = %s,
-					price =%s,
-					site = %s,
-					address = %s,
-					image = %s,
-					date = %s
-					WHERE
-					userEmail = %s;
-					"""
-					args = (userName, userID, id, time, price, site, address, image, date, userEmail)
-					requestCon(overwriteSQL, args)
-					resp = dict()
-					resp["ok"] = True
-					return make_response(jsonify(resp), 200)
-
-				elif order == []: 
-					orderSQL = """
-					insert into booking (userEmail, userName, userID, attractionID, time, price, site, address, image, date) 
-					values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
-					"""
-					args = (userEmail, userName, userID, id, time, price, site, address, image, date)
-					requestCon(orderSQL, args)
-					resp = dict()
-					resp["ok"] = True
-					return make_response(jsonify(resp), 200)
-
-				else: 
-					return err("建立失敗", 400)
-			
-			elif request.method == 'GET':
-				orderSQL = """
-				select * from booking where userEmail = %s;
-				"""
-				args = (userEmail,)
-				order = requestCon(orderSQL, args)
-				# print(order)
-				if order != []:
-					resp = handleOrderData(order)
-					# print(resp.get_json())
-					return resp.get_json()
-				else:
-					resp = dict()
-					resp["data"] = None
-					return make_response(resp, 200)
-					
-				
-			elif request.method == 'DELETE':
-				deleteSQL = """
-				delete from booking where userEmail = %s;
-				"""
-				args = (userEmail,)
-				requestCon(deleteSQL, args)
+				args = (userName, userID, id, time, price, site, address, image, date, userEmail)
+				requestCon(overwriteSQL, args)
 				resp = dict()
 				resp["ok"] = True
 				return make_response(jsonify(resp), 200)
+
+			elif order == []: 
+				orderSQL = """
+				insert into booking (userEmail, userName, userID, attractionID, time, price, site, address, image, date) 
+				values (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s);
+				"""
+				args = (userEmail, userName, userID, id, time, price, site, address, image, date)
+				requestCon(orderSQL, args)
+				resp = dict()
+				resp["ok"] = True
+				return make_response(jsonify(resp), 200)
+
+			else: 
+				return err("建立失敗", 400)
+		
+		elif request.method == 'GET':
+			orderSQL = """
+			select * from booking where userEmail = %s;
+			"""
+			args = (userEmail,)
+			order = requestCon(orderSQL, args)
+			# print(order)
+			if order != []:
+				resp = handleOrderData(order)
+				# print(resp.get_json())
+				return resp.get_json()
 			else:
-				# print(3)
-				return err("請求方式不支援", 500)
+				resp = dict()
+				resp["data"] = None
+				return make_response(resp, 200)
+				
+			
+		elif request.method == 'DELETE':
+			deleteSQL = """
+			delete from booking where userEmail = %s;
+			"""
+			args = (userEmail,)
+			requestCon(deleteSQL, args)
+			resp = dict()
+			resp["ok"] = True
+			return make_response(jsonify(resp), 200)
 		else:
-			return err("請登入系統", 403)
+			# print(3)
+			return err("請求方式不支援", 500)
 	else:
 		return err("請登入系統", 403)
 
@@ -340,6 +359,7 @@ def auth():
 				userInfo["id"] = memberInfo[0][0]
 				userInfo["name"] = memberInfo[0][1]
 				userInfo["email"] = memberInfo[0][2]
+				userInfo["avatar"] = memberInfo[0][4]
 				encode_jwt = jwt.encode(userInfo, secret, algorithm='HS256')
 				# print(encode_jwt)
 				resp = dict()
@@ -360,6 +380,17 @@ def auth():
 			if userToken:
 				# print(userToken)
 				userInfo = jwt.decode(userToken,secret, algorithms='HS256')
+				email = userInfo["email"]
+				updateUserSatusSQL = """
+				select * from member where email = %s;
+				"""
+				args = (email,)
+				userNewStatus = requestCon(updateUserSatusSQL, args)
+				userInfo = dict()
+				userInfo["id"] = userNewStatus[0][0]
+				userInfo["name"] = userNewStatus[0][1]
+				userInfo["email"] = userNewStatus[0][2]
+				userInfo["avatar"] = userNewStatus[0][4]
 				resp = make_response(userInfo, 200)
 				resp.headers.add('Access-Control-Allow-Origin', '*')
 				return resp
@@ -522,6 +553,37 @@ def ordersHandler():
 		msg = "未登入系統"
 		return err(msg, 403)
 
+@app.route("/api/history", methods=['GET','POST'])
+def queryHistory():
+	userToken = request.cookies.get('token')
+	if (isUser(userToken)):
+		email = request.args.get('email')
+		if request.method == 'GET':
+			if email != None:
+				queryHistorySQl = """
+				select orderid, price, name, time, orderStatus from orderDetails
+				where email = %s;
+				"""
+				args = (str(email),)
+				orders = requestCon(queryHistorySQl,args)
+				resp = []
+				for order in orders:
+					resp.append({ 
+						'orderuui': order[0],
+						'price': order[1],
+						'site': order[2],
+						'time': order[3],
+						'orderSatus': order[4]
+					})
+				return make_response(resp, 200)
+			else:
+				msg = "請提供email做查詢"
+				return err(msg, 400)
+	else:
+		msg = "未登入系統"
+		return err(msg, 403)
+
+
 @app.route("/api/attractions")
 def lookUpSitesAPI():
 	if request.method == 'GET':
@@ -606,6 +668,9 @@ def booking():
 @app.route("/thankyou")
 def thankyou():
 	return render_template("thankyou.html")
+@app.route("/member")
+def member():
+	return render_template("member.html")
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=3000)
