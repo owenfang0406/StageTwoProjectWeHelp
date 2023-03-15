@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+form {
+display: flex;
+flex-direction: column;
+}
+
+#preview {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+</style>
+<body>
+    <main>
+        <form action="" id="memberPic">
+            <label for="avatar">選擇照片</label>
+            <input type="file" id="avatar" name="avatar">
+            <input type="submit" value="Upload">
+        </form>
+        <img id="preview" src="" alt="Image preview">
+    </main>
+</body>
+<script>
+function previewImage() {
+    // Get the file input element
+    var input = document.getElementById('avatar');
+
+    // Create a FileReader object
+    var reader = new FileReader();
+    console.log(input.files[0])
+    if (/\.(jpe?g|png|gif)$/i.test(input.files[0].name)) {
+        console.log("regex")
+        // Add an event listener to the FileReader object to execute when the file has finished loading
+        reader.addEventListener('load', function () {
+            console.log(1)
+        // Get the img element
+            var imgElement = document.getElementById('preview');
+
+            // Set the src attribute of the img element to the data URL of the file
+            imgElement.src = reader.result;});
+
+            // Read the file as a data URL
+            reader.readAsDataURL(input.files[0]);
+    }
+}
+
+document.getElementById('avatar').addEventListener('change', previewImage);
+
+function checkExt() {
+    // Get the file input element
+    var input = document.getElementById('avatar');
+
+    // Get the selected files
+    var files = input.files;
+
+    // Check if the selected files are images
+    for (var i = 0; i < files.length; i++) {
+        var fileExtension = files[i].name.split('.').pop().toLowerCase();
+
+        // Check if the file extension is in the list of supported image extensions
+        if (['jpg', 'jpeg', 'png', 'gif'].indexOf(fileExtension) !== -1) {
+        console.log('Selected file is an image');
+        return true
+        } else {
+        console.log('Selected file is not an image');
+        input.files = null;
+        return false
+        }
+    }
+}
+
+</script>
+</html>
