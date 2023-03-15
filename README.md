@@ -69,11 +69,11 @@ style="width:400px; height:400px;"></img>
 
 ## Search Attractions and Book Trip
 
-<img src="materials/Taipei Demo1.gif" alt="Demo1" style="width:500px; height:800px;">
+<img src="materials/Taipei Demo1.gif" alt="Demo1" style="width:1000px; height:800px;">
 
 ## Member Page and Upload Avatar
 
-<img src="materials/Taipei Demo2.gif" alt="Demo2" style="width:500px; height:800px;">
+<img src="materials/Taipei Demo2.gif" alt="Demo2" style="width:1000px; height:800px;">
 
 
 
